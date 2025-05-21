@@ -21,11 +21,10 @@ language = 'fr'  # Spécifie le français pour la génération de contenu
 
 # -- Options pour le rendu HTML -------------------------------------------
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
 html_theme_options = {
-    'collapse_navigation': False,
-    'navigation_depth': 3,
-    'style_external_links': True,
+    "navigation_with_keys": True,
+    "show_prev_next": False,
 }
 
 html_static_path = ['_static']  # Assure-toi que ce dossier existe ou enlève cette ligne
