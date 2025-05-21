@@ -5,7 +5,7 @@ GuardVision
 
 
 - **Superviseur** :  Mr. MASROUR Tawfik |linkedin_Masrour|
-.. |linkedin_Masrour| image:: Documentation/images/linkedinn.jfif
+.. |linkedin_Masrour| image:: images/linkedinn.jfif
     :width: 20
     :height: 20
     :target: https://www.linkedin.com/in/tawfik-masrour-43163b85/
