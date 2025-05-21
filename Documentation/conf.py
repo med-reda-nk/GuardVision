@@ -13,7 +13,7 @@ master_doc = 'index'  # Change if your main file is named differently
 # General information about the project.
 project = 'GuardVision'
 copyright = '2023, Mohamed Reda Nkira'
-author = 'Mohamed Reda Nkira'
+author = 'Mohamed Reda Nkira - Zouga Mouhcine'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -59,7 +59,7 @@ man_pages = [
 # -- Options for Texinfo output -------------------------------------------
 
 texinfo_documents = [
-    (master_doc, 'YourProjectName', 'Your Project Name Documentation',
-     author, 'YourProjectName', 'One line description of project.',
+    (master_doc, 'GuardVision', 'Documentation',
+     author, 'GuardVision', 'Systeme de Surveillance',
      'Miscellaneous'),
 ]
