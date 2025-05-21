@@ -1,26 +1,10 @@
-# Read the Docs build configuration file
-# For detailed config options, see:
-# https://docs.readthedocs.io/en/stable/config-file/v2.html
-
 version: 2
 
-# Specify the directory where your documentation source files live
-docs_dir: docs
-
-# Configuration for Sphinx documentation builder
 sphinx:
-  # Location of Sphinx conf.py file relative to the root (change if needed)
-  configuration: Documentation/conf.py
+  configuration: Documentaion/conf.py
 
-# Python environment setup for Read the Docs build
 python:
-  # Python version to use during the build
   version: 3.9
-  # Commands to install your project and dependencies
   install:
     - method: pip
       path: .
-      # Uncomment this line if using requirements.txt for dependencies
-      # requirements: requirements.txt
-
-# You can customize other options like build image or commands if needed
