@@ -1,8 +1,15 @@
-Welcome to GuardVision's documentation!
-=======================================
+GuardVision Porject
+==================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Project Contents:
 
-Introduction
+   Introduction
+   détection d'arme
+   Reconnaissance d'Actions
+   Analyse de la Densité de Foule
+   Tracking
+   Intégration et Architecture Système
+   Évaluation et Validation
+   Conclusion et Perspectives
