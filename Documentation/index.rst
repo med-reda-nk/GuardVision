@@ -26,8 +26,6 @@ GuardVision
 
 Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/GuardVision>`__ 
 
-Lien vers google colab notbooks:  `Cliquez ici <https://github.com/A-Lahcen10/plastics-Waste-detection-and-Tracking/blob/main/notebooks/train-yolo11-object-detection-on-custom-dataset.ipynb>`__
-
 
 
 .. figure:: images/Image2.jpg
