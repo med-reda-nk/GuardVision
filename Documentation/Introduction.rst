@@ -1,5 +1,5 @@
 GuardVision
-    Introduction
+Introduction
 Dans le contexte actuel où la sécurité publique représente un enjeu majeur, les systèmes de surveillance intelligents basés sur la vision par ordinateur offrent des solutions prometteuses. GuardVision représente un système de surveillance avancé intégrant plusieurs technologies de pointe en intelligence artificielle et vision par ordinateur.
 Notre système repose sur cinq composantes principales :
 **Détection d'armes** : Reconnaissance automatique d'objets potentiellement dangereux dans des flux vidéo en temps réel
