@@ -3,12 +3,11 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    - name: pip
-    - name: sphinx
-
-sphinx:
-  configuration: Documentation/conf.py
-
+    pip:
+      name: pip
+    sphinx:
+      name: sphinx
+      configuration: Documentation/conf.py
 python:
   version: 3.9
   install:
