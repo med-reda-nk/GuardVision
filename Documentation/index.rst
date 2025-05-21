@@ -42,7 +42,7 @@ Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/Guard
 
 .. toctree::
    :maxdepth: 3
-   :caption: Plan de la documentation
+   :caption: Rapport du projet
 
    Introduction.rst
    détection d'arme.rst
