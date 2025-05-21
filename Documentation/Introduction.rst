@@ -2,7 +2,7 @@ Introduction
 ====================
 
 
-.. figure:: /Documentation/images/Image2.jpg
+.. figure:: images/Image2.jpg
    :width: 100%
    :alt: Alternative text for the image
 
