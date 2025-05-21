@@ -7,14 +7,6 @@ build:
     - sphinx
 
 sphinx:
-  configuration: docs/conf.py
-
-python:
-  version: 3.9
-  install:
-    - method: pip
-      path: .
-sphinx:
   configuration: Documentation/conf.py
 
 python:
