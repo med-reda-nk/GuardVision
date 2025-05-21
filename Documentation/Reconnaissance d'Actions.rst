@@ -1,21 +1,28 @@
-## Reconnaissance d'Actions
+Reconnaissance d'Actions
+=========================
 
 Cette composante vise à identifier des comportements suspects ou anormaux pouvant indiquer une menace potentielle.
 
-### Méthodologie
-- **Modèles utilisées** : Utilisation de DenseNet121 pré-entraîné sur ImageNet comme backbone, en excluant les couches fully-connected supérieures. pour l'extractions de feature avec un classifieur profond pour classifier les scènes.
+Méthodologie
+------------
+
+- **Modèles utilisés** : Utilisation de DenseNet121 pré-entraîné sur ImageNet comme backbone, en excluant les couches fully-connected supérieures pour l'extraction de caractéristiques, avec un classifieur profond pour classifier les scènes.
 - **Classification d'actions** : Identification de comportements spécifiques comme courir de manière erratique, se battre, tomber, ou adopter une posture menaçante.
 - **Détection d'anomalies** : Apprentissage de modèles de comportement normal pour identifier les déviations significatives.
 - **Analyse de posture** : Utilisation de frameworks comme OpenPose ou MediaPipe pour l'extraction de squelettes et l'analyse de posture.
 
-### Actions surveillées
+Actions surveillées
+-------------------
+
 - Interactions violentes entre individus
 - Mouvements brusques ou erratiques
 - Comportements suspects (rôder, surveillance prolongée)
 - Chutes ou situations de détresse
 - Gestes associés à l'utilisation d'armes
 
-### Implémentation
+Implémentation
+--------------
+
 - Extraction de caractéristiques spatio-temporelles
 - Fenêtres glissantes pour l'analyse continue du flux vidéo
 - Système de score pour évaluer le niveau de risque associé aux actions détectées
