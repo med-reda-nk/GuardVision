@@ -3,7 +3,9 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    - ["pip","sphinx"]
+    - name: pip
+    - name: sphinx
+
 sphinx:
   configuration: Documentation/conf.py
 
