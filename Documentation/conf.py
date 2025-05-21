@@ -11,7 +11,7 @@ master_doc = 'index'
 
 # Informations générales
 project = 'GuardVision'
-copyright = '2023, Mohamed Reda Nkira'
+copyright = '2025, Mohamed Reda Nkira - Zouga Mouhcine'
 author = 'Mohamed Reda Nkira - Zouga Mouhcine'
 
 version = '0.1'
