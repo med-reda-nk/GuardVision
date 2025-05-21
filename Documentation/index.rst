@@ -13,11 +13,11 @@ GuardVision
 
 
 - **Réalisé par** :   Nkira Mohamed Reda |linkedin_Nkira| & Zouga Mouhcine |linkedin_zouga|  
-.. |linkedin_nkira| image:: Documentation/images/linkedinn.jfif
+.. |linkedin_nkira| image:: images/linkedinn.jfif
     :width: 20
     :height: 20
     :target: https://www.linkedin.com/in/mohamed-reda-nkira/
-.. |linkedin_zouga| image:: Documentation/images/linkedinn.jfif
+.. |linkedin_zouga| image:: images/linkedinn.jfif
     :width: 20
     :height: 20
     :target: https://www.linkedin.com/in/mouhcine-zouga/
@@ -30,7 +30,7 @@ Lien vers google colab notbooks:  `Cliquez ici <https://github.com/A-Lahcen10/pl
 
 
 
-.. figure:: /Documentation/images/Image2.jpg
+.. figure:: images/Image2.jpg
    :width: 100%
    :alt: Alternative text for the image
    :name: logo
