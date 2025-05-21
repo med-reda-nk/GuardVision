@@ -1,15 +1,15 @@
-GuardVision Porject
+GuardVision Project
 ==================
 
 .. toctree::
    :maxdepth: 2
    :caption: Project Contents:
 
-   Introduction.rst
-   détection d'arme.rst
-   Reconnaissance d'Actions.rst
-   Analyse de la Densité de Foule.rst
-   Tracking.rst
-   Intégration et Architecture Système.rst
-   Évaluation et Validation.rst
-   Conclusion et Perspectives.rst
+   Documentation/Introduction.rst
+   Documentation/détection d'arme.rst
+   Documentation/Reconnaissance d'Actions.rst
+   Documentation/Analyse de la Densité de Foule.rst
+   Documentation/Tracking.rst
+   Documentation/Intégration et Architecture Système.rst
+   Documentation/Évaluation et Validation.rst
+   Documentation/Conclusion et Perspectives.rst
