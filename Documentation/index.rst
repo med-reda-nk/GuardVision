@@ -16,11 +16,11 @@ GuardVision - CV
 .. |linkedin_nkira| image:: images/linkedinn.jfif
     :width: 20
     :height: 20
-    :target: https://www.linkedin.com/in/mohamed-reda-nkira/
+    :target: https://www.linkedin.com/in/mohamed-reda-nkira-5691432a3/
 .. |linkedin_zouga| image:: images/linkedinn.jfif
     :width: 20
     :height: 20
-    :target: https://www.linkedin.com/in/mouhcine-zouga/
+    :target: https://www.linkedin.com/in/zouga-mouhcine-811688285/
 
 
 
