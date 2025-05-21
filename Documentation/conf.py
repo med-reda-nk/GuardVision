@@ -21,10 +21,12 @@ language = 'fr'  # Spécifie le français pour la génération de contenu
 
 # -- Options pour le rendu HTML -------------------------------------------
 
-html_theme = 'pydata_sphinx_theme'
+html_theme = 'sphinx_book_theme'
 html_theme_options = {
-    "navigation_with_keys": True,
-    "show_prev_next": False,
+    "repository_url": "https://github.com/yourproject",
+    "use_repository_button": True,
+    "use_issues_button": True,
+    "use_edit_page_button": True,
 }
 
 html_static_path = ['_static']  # Assure-toi que ce dossier existe ou enlève cette ligne
