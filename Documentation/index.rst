@@ -46,13 +46,13 @@ Lien vers google colab notbooks:  `Cliquez ici <https://github.com/A-Lahcen10/pl
    :maxdepth: 3
    :caption: Plan de la documentation
 
-   Documentation/Introduction.rst
-   Documentation/détection d'arme.rst
-   Documentation/Reconnaissance d'Actions.rst
-   Documentation/Analyse de la Densité de Foul.rst
-   Documentation/Tracking.rst
-   Documentation/Intégration et Architecture Système.rst
-   Documentation/Évaluation et Validation.rst
-   Documentation/Considération Éthiques et Légales.rst
-   Documentation/Conclusions et Perspectives.rst
+   Introduction.rst
+   détection d'arme.rst
+   Reconnaissance d'Actions.rst
+   Analyse de la Densité de Foul.rst
+   Tracking.rst
+   Intégration et Architecture Système.rst
+   Évaluation et Validation.rst
+   Considération Éthiques et Légales.rst
+   Conclusions et Perspectives.rst
 
