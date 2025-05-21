@@ -3,14 +3,13 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    - pip
-    - sphinx
+    python: "3.9"
+    pip: true
 
 sphinx:
   configuration: Documentation/conf.py
 
 python:
-  version: 3.9
   install:
     - method: pip
       path: .
