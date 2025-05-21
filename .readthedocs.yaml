@@ -1,5 +1,8 @@
 version: 2
 
+build:
+  os: ubuntu
+
 sphinx:
   configuration: Documentation/conf.py
 
