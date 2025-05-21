@@ -9,7 +9,7 @@ build:
       name: sphinx
       configuration: Documentation/conf.py
 python:
-  version: 3.10
+  version: "3.10"
   install:
     - method: pip
       path: .
