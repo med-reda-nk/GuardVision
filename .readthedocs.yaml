@@ -3,10 +3,14 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    python:
-      version: 3.10
-      install:
-        - method: pip
-          path: .
-  matrix:
-    - python: 3.10
+    - pip
+    - sphinx
+
+sphinx:
+  configuration: Documentation/conf.py
+
+python:
+  version: 3.9
+  install:
+    - method: pip
+      path: .
