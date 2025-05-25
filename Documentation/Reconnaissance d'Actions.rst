@@ -28,89 +28,89 @@ Implémentation
 - Système de score pour évaluer le niveau de risque associé aux actions détectées
 - Fusion des informations de multiples caméras pour une analyse cohérente
 
-Model Performance Analysis
-==========================
+Analyse de Performance du Modèle : Courbes ROC
+=============================================
 
-Overview
---------
+Vue d'ensemble
+--------------
 
-This analysis presents the Receiver Operating Characteristic (ROC) curves for a multi-class classification model designed to predict different types of criminal activities. The model demonstrates varying levels of performance across different crime categories, as measured by the Area Under the Curve (AUC) metric.
+Cette analyse présente les courbes ROC (Receiver Operating Characteristic) pour un modèle de classification multi-classes conçu pour prédire différents types d'activités criminelles. Le modèle démontre des niveaux de performance variables selon les catégories de crimes, mesurés par la métrique AUC (Area Under the Curve - Aire Sous la Courbe).
 
-Model Performance by Crime Category
------------------------------------
+Performance du Modèle par Catégorie de Crime
+---------------------------------------------
 
-The classification model shows significant variation in predictive performance across different crime types:
+Le modèle de classification montre une variation significative de la performance prédictive selon les différents types de crimes :
 
-**High-Performing Categories (AUC > 0.70):**
+**Catégories Haute Performance (AUC > 0,70) :**
 
-* **Shoplifting (AUC: 0.86)** - Exhibits the strongest predictive performance, with the ROC curve showing excellent separation from the random baseline
-* **Stealing (AUC: 0.73)** - Demonstrates good predictive capability with substantial improvement over random classification
-* **Robbery (AUC: 0.70)** - Shows solid performance with meaningful predictive value
+* **Vol à l'étalage / Shoplifting (AUC : 0,86)** - Présente la meilleure performance prédictive, avec une courbe ROC montrant une excellente séparation par rapport à la ligne de base aléatoire
+* **Vol / Stealing (AUC : 0,73)** - Démontre une bonne capacité prédictive avec une amélioration substantielle par rapport à la classification aléatoire
+* **Braquage / Robbery (AUC : 0,70)** - Montre une performance solide avec une valeur prédictive significative
 
-**Moderate-Performing Categories (AUC: 0.60-0.69):**
+**Catégories Performance Modérée (AUC : 0,60-0,69) :**
 
-* **Arson (AUC: 0.67)** - Displays moderate predictive performance with room for improvement
-* **Abuse (AUC: 0.64)** - Shows fair classification ability above random chance
-* **Normal (AUC: 0.60)** - Represents baseline behavior classification with modest predictive power
-* **Arrest (AUC: 0.59)** - Demonstrates limited but measurable predictive capability
+* **Incendie criminel / Arson (AUC : 0,67)** - Affiche une performance prédictive modérée avec des possibilités d'amélioration
+* **Abus / Abuse (AUC : 0,64)** - Montre une capacité de classification correcte au-dessus du hasard
+* **Normal (AUC : 0,60)** - Représente la classification du comportement de référence avec un pouvoir prédictif modeste
+* **Arrestation / Arrest (AUC : 0,59)** - Démontre une capacité prédictive limitée mais mesurable
 
-**Lower-Performing Categories (AUC < 0.60):**
+**Catégories Performance Faible (AUC < 0,60) :**
 
-* **Explosion (AUC: 0.56)** - Shows minimal improvement over random classification
-* **Vandalism (AUC: 0.56)** - Exhibits limited predictive performance
-* **Assault (AUC: 0.54)** - Demonstrates poor classification ability
-* **Burglary (AUC: 0.52)** - Shows marginal performance barely above random chance
-* **Shooting (AUC: 0.46)** - Performs below random baseline, indicating potential model issues
-* **Fighting (AUC: 0.40)** - Exhibits poor predictive performance significantly below random chance
+* **Explosion (AUC : 0,56)** - Montre une amélioration minimale par rapport à la classification aléatoire
+* **Vandalisme / Vandalism (AUC : 0,56)** - Présente une performance prédictive limitée
+* **Agression / Assault (AUC : 0,54)** - Démontre une faible capacité de classification
+* **Cambriolage / Burglary (AUC : 0,52)** - Montre une performance marginale à peine au-dessus du hasard
+* **Fusillade / Shooting (AUC : 0,46)** - Performance en dessous de la ligne de base aléatoire, indiquant des problèmes potentiels du modèle
+* **Bagarre / Fighting (AUC : 0,40)** - Présente une performance prédictive médiocre significativement en dessous du hasard
 
-ROC Curve Interpretation
--------------------------
+Interprétation des Courbes ROC
+-------------------------------
 
-The ROC curves plot the True Positive Rate (sensitivity) against the False Positive Rate (1-specificity) at various classification thresholds. Key observations include:
+Les courbes ROC tracent le Taux de Vrais Positifs (sensibilité) contre le Taux de Faux Positifs (1-spécificité) à différents seuils de classification. Observations clés :
 
-**Curve Characteristics:**
+**Caractéristiques des Courbes :**
 
-* Curves closer to the top-left corner indicate better performance
-* The dashed diagonal line represents random guessing (AUC = 0.50)
-* Steeper initial rises indicate better performance at low false positive rates
-* The area under each curve quantifies overall classification performance
+* Les courbes plus proches du coin supérieur gauche indiquent une meilleure performance
+* La ligne diagonale pointillée représente la classification aléatoire (AUC = 0,50)
+* Les montées initiales plus raides indiquent une meilleure performance à faibles taux de faux positifs
+* L'aire sous chaque courbe quantifie la performance globale de classification
 
-**Performance Distribution:**
+**Distribution de Performance :**
 
-The model shows a clear hierarchy of predictive capability, with property crimes (shoplifting, stealing) showing superior performance compared to violent crimes (shooting, fighting, assault). This suggests that the feature set may be more discriminative for certain types of criminal behavior.
+Le modèle montre une hiérarchie claire de capacité prédictive, avec les crimes contre les biens (vol à l'étalage, vol) montrant une performance supérieure comparée aux crimes violents (fusillade, bagarre, agression). Ceci suggère que l'ensemble de caractéristiques peut être plus discriminant pour certains types de comportements criminels.
 
-Model Implications
-------------------
+Implications du Modèle
+----------------------
 
-**Strengths:**
+**Forces :**
 
-* Excellent performance in detecting shoplifting and stealing activities
-* Reasonable performance across several crime categories
-* Clear differentiation between high and low-performing categories
+* Excellente performance dans la détection des activités de vol à l'étalage et de vol
+* Performance raisonnable dans plusieurs catégories de crimes
+* Différenciation claire entre les catégories haute et basse performance
 
-**Areas for Improvement:**
+**Axes d'Amélioration :**
 
-* Poor performance on violent crimes (shooting, fighting, assault)
-* Several categories performing at or below random chance
-* Potential need for feature engineering or class-specific modeling approaches
+* Faible performance sur les crimes violents (fusillade, bagarre, agression)
+* Plusieurs catégories performant au niveau ou en dessous du hasard
+* Besoin potentiel d'ingénierie de caractéristiques ou d'approches de modélisation spécifiques par classe
 
-**Recommendations:**
+**Recommandations :**
 
-1. **Feature Analysis**: Investigate which features contribute most to high-performing categories
-2. **Class Imbalance**: Examine potential class imbalance issues for poor-performing categories
-3. **Model Refinement**: Consider ensemble methods or specialized models for underperforming classes
-4. **Data Quality**: Review data quality and labeling accuracy for categories with AUC < 0.50
+1. **Analyse des Caractéristiques** : Investiguer quelles caractéristiques contribuent le plus aux catégories haute performance
+2. **Déséquilibre des Classes** : Examiner les problèmes potentiels de déséquilibre des classes pour les catégories peu performantes
+3. **Raffinement du Modèle** : Considérer les méthodes d'ensemble ou des modèles spécialisés pour les classes sous-performantes
+4. **Qualité des Données** : Revoir la qualité des données et la précision de l'étiquetage pour les catégories avec AUC < 0,50
 
 Conclusion
 ----------
 
-The multi-class classification model demonstrates variable performance across different crime categories, with particularly strong results for property crimes and weaker performance for violent crimes. The significant variation in AUC scores suggests that different crime types may require specialized modeling approaches or additional feature engineering to achieve optimal predictive performance.
+Le modèle de classification multi-classes démontre une performance variable selon les différentes catégories de crimes, avec des résultats particulièrement forts pour les crimes contre les biens et une performance plus faible pour les crimes violents. La variation significative des scores AUC suggère que différents types de crimes peuvent nécessiter des approches de modélisation spécialisées ou une ingénierie de caractéristiques supplémentaire pour atteindre une performance prédictive optimale.
 
-Technical Specifications
+Spécifications Techniques
 -------------------------
 
-:Model Type: Multi-class Classification
-:Evaluation Metric: Area Under the ROC Curve (AUC)
-:Number of Classes: 13 crime categories + 1 normal class
-:Performance Range: AUC 0.40 - 0.86
-:Baseline Comparison: Random guessing (AUC = 0.50)
+:Type de Modèle: Classification Multi-classes
+:Métrique d'Évaluation: Aire Sous la Courbe ROC (AUC)
+:Nombre de Classes: 13 catégories de crimes + 1 classe normale
+:Plage de Performance: AUC 0,40 - 0,86
+:Comparaison de Référence: Classification aléatoire (AUC = 0,50)
