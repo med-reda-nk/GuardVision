@@ -31,6 +31,10 @@ Implémentation
 Analyse de Performance du Modèle : Courbes ROC
 =============================================
 
+.. figure:: images/auc.jpg
+   :width: 100%
+   :alt: Alternative text for the image
+
 Vue d'ensemble
 --------------
 
