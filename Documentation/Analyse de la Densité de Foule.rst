@@ -35,10 +35,6 @@ Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
    :width: 100%
    :alt: Alternative text for the image
 
-Vue d'ensemble
---------------
-
-Cette analyse présente l'évolution de l'Erreur Absolue Moyenne (MAE - Mean Absolute Error) au cours de l'entraînement du modèle sur 120 époques. Le graphique compare les performances du modèle sur les données d'entraînement et de validation, permettant d'évaluer la capacité de généralisation et de détecter d'éventuels problèmes de sur-apprentissage.
 
 Évolution de la Performance
 ---------------------------
