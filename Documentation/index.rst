@@ -47,7 +47,7 @@ Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/Guard
    Introduction.rst
    détection d'arme.rst
    Reconnaissance d'Actions.rst
-   Analyse de la Densité de Foul.rst
+   Analyse de la Densité de Foule.rst
    Tracking.rst
    Intégration et Architecture Système.rst
    Évaluation et Validation.rst
