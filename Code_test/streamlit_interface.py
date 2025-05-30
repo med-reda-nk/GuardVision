@@ -141,4 +141,6 @@
 
     if __name__ == "__main__":
         main()
-
+        
+# To run the Streamlit app, use the following command in your terminal:
+# streamlit run app.py --server.port 8501 --server.address 0.0.0.0
