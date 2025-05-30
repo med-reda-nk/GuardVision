@@ -3,7 +3,7 @@ import numpy as np
 from threading import Thread
 import queue
 import time
-
+import tensorflow as tf
 class ModelManager:
     def __init__(self):
         self.models = {}
@@ -14,7 +14,7 @@ class ModelManager:
     def load_model(self, model_name, model_path):
         """Load a model from the specified path"""
         try:
-            model = cv2.dnn.readNetFromDarknet(model_path)
+            model = tf.keras.models.load_model(model_path)
             self.models[model_name] = model
             print(f"Successfully loaded model: {model_name}")
         except Exception as e:
