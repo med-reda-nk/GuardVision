@@ -29,7 +29,7 @@ Applications pratiques
 - Identification des goulots d'étranglement potentiels
 
 Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
-=======================================================================
+-------------------------------------------------------------------
 
 .. figure:: images/mae.jpg
    :width: 100%
