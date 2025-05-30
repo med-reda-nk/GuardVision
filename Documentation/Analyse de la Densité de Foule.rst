@@ -36,26 +36,7 @@ Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
    :alt: Alternative text for the image
 
 
-Évolution de la Performance
----------------------------
 
-**Phase d'Apprentissage Initial (Époques 0-20) :**
-
-* **MAE d'Entraînement** : Diminution rapide de 6,3 à environ 3,5, montrant une convergence initiale efficace
-* **MAE de Validation** : Réduction similaire de 6,2 à environ 3,6, indiquant un apprentissage cohérent
-* **Comportement** : Convergence rapide avec des courbes parallèles, suggérant un apprentissage sain
-
-**Phase de Stabilisation (Époques 20-80) :**
-
-* **MAE d'Entraînement** : Diminution progressive et régulière de 3,5 à environ 2,8
-* **MAE de Validation** : Stabilisation autour de 3,2-3,3 avec de légères fluctuations
-* **Comportement** : Début de divergence entre les courbes, indiquant un possible début de sur-apprentissage
-
-**Phase de Sur-apprentissage (Époques 80-120) :**
-
-* **MAE d'Entraînement** : Continuation de la diminution jusqu'à environ 2,5
-* **MAE de Validation** : Stabilisation avec une légère tendance à la hausse vers 3,1-3,4
-* **Comportement** : Divergence claire des courbes, confirmant le sur-apprentissage
 
 Analyse de la Convergence
 -------------------------
@@ -66,19 +47,13 @@ Analyse de la Convergence
 * La courbe d'entraînement continue de décroître de manière monotone
 * La courbe de validation se stabilise après l'époque 20, puis montre des signes de dégradation
 
-**Point Optimal :**
 
-Le point optimal d'arrêt de l'entraînement se situe approximativement à l'époque 25-30, où :
+L'arrêt de l'entraînement se situe approximativement à l'époque 25-30, où :
 
 * MAE d'entraînement ≈ 3,4
 * MAE de validation ≈ 3,5
 * Écart minimal entre entraînement et validation
 
-**Indicateurs de Sur-apprentissage :**
-
-* Écart croissant entre les courbes après l'époque 30
-* Amélioration continue sur les données d'entraînement sans amélioration sur la validation
-* Stabilisation puis légère dégradation de la performance de validation
 
 Implications pour le Modèle
 ---------------------------
@@ -95,53 +70,14 @@ Implications pour le Modèle
 * Capacité de généralisation correcte dans les premières époques
 * Développement progressif du sur-apprentissage
 
-Recommandations d'Optimisation
-------------------------------
-
-**Stratégies d'Amélioration :**
-
-1. **Arrêt Précoce (Early Stopping)** :
-   
-   * Implémenter un arrêt automatique vers l'époque 25-30
-   * Surveiller la stagnation de la MAE de validation
-   * Sauvegarder le meilleur modèle basé sur la validation
-
-2. **Techniques de Régularisation** :
-   
-   * Ajouter du dropout pour réduire le sur-apprentissage
-   * Implémenter la régularisation L1/L2
-   * Utiliser la normalisation par batch si applicable
-
-3. **Optimisation des Hyperparamètres** :
-   
-   * Réduire le taux d'apprentissage après l'époque 20
-   * Implémenter un scheduler de taux d'apprentissage adaptatif
-   * Ajuster la taille des lots (batch size)
-
-4. **Augmentation des Données** :
-   
-   * Enrichir le dataset de validation
-   * Appliquer des techniques d'augmentation des données
-   * Vérifier la représentativité des données de validation
 
 Évaluation de la Robustesse
 ---------------------------
-
-**Points Forts :**
-
 * Convergence initiale rapide et stable
 * Absence d'instabilité ou d'oscillations importantes
 * Performance finale acceptable (MAE < 3,5)
 
-**Points Faibles :**
 
-* Sur-apprentissage progressif après l'époque 30
-* Stagnation de la performance de validation
-* Écart significatif entre entraînement et validation en fin d'entraînement
-
-**Recommandation Finale :**
-
-Le modèle optimal se trouve aux environs de l'époque 25-30. L'entraînement au-delà de ce point n'apporte pas d'amélioration de la généralisation et conduit à un sur-apprentissage progressif.
 
 Spécifications Techniques
 -------------------------
