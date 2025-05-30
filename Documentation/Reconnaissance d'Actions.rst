@@ -29,8 +29,7 @@ Implémentation
 - Fusion des informations de multiples caméras pour une analyse cohérente
 
 Analyse de Performance du Modèle : Courbes ROC
-=============================================
-
+----------------------------------------------
 .. figure:: images/auc.jpg
    :width: 100%
    :alt: Alternative text for the image
