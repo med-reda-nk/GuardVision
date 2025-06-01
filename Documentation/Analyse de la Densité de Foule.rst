@@ -1,6 +1,8 @@
 Analyse de la Densité de Foule
 ==============================
 
+Check the notebook: `Crowd Density Notebook <../notebooks/Crowd_Density_CV.ipynb>`_
+
 L'analyse de densité permet d'évaluer le nombre de personnes présentes dans une zone et leur distribution spatiale, essentielle pour détecter les situations de surpopulation ou de mouvements de panique.
 
 Méthodologie
@@ -28,7 +30,6 @@ Applications pratiques
 - Optimisation de la gestion des espaces publics
 - Identification des goulots d'étranglement potentiels
 
-Check the notebook: `Crowd Density Notebook <../notebooks/Crowd_Density_CV.ipynb>`_
 
 
 Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
