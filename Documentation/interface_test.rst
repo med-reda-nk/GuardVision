@@ -21,7 +21,7 @@ Architecture du Système
    - Densité de Foule : Estime le nombre de personnes
 3. **Système d'Alerte** : Déclenche des avertissements visuels
 
-.. figure:: image/architecture.puml
+.. figure:: image/architecture.png
     :width: 80%
     :align: center
     :alt: Architecture Système
