@@ -8,7 +8,7 @@ GuardVision Pro - Système de Surveillance Intelligente en Temps Réel
 .. image:: https://img.shields.io/badge/Licence-MIT-green
     :target: LICENSE
 
-Check the notebook: `Test Interface <../Code_test/model_managing.py>`_
+Check the Test code : `Test Interface <../Code_test/model_managing.py>`_
 
 Un système de surveillance combinant reconnaissance d'actions et analyse de densité de foule utilisant des modèles TensorFlow.
 
