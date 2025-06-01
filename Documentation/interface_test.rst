@@ -34,15 +34,10 @@ Composants Clés
 - ``draw_predictions()`` : Visualise les détections sur le flux vidéo
 - Interface Dynamique : Métriques de performance et contrôles en temps réel
 
-Prérequis
----------
-- Python 3.8+
-- GPU NVIDIA (recommandé) avec CUDA 11.8
-- Webcam ou source RTSP
 
 Installation
 ------------
 1. Cloner le dépôt :
    ```bash
-   git clone https://github.com/votrenom/guardvision-pro.git
+   git clone https://github.com/med-reda-nk/GuardVision.git
    cd guardvision-pro
