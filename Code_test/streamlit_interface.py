@@ -31,7 +31,7 @@
         """, unsafe_allow_html=True)
 
         # Title and description
-        st.title("🤖 AI Vision System")
+        st.title("🤖 GuardVision")
         st.markdown("""
             Real-time object detection and face recognition system powered by YOLOv3 and custom face detection models.
         """)
