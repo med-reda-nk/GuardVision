@@ -1,6 +1,8 @@
 Tracking (Suivi d'Individus)
 ============================
 
+Check the notebook: `Tracking test code <../Code_test/tracking.py>`_
+
 Le système de tracking permet de suivre les déplacements des personnes à travers l'espace surveillé, même lorsqu'elles passent d'une caméra à une autre.
 
 Méthodologie
