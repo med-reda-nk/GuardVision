@@ -1,6 +1,8 @@
 Reconnaissance d'Actions
 =========================
 
+Check the notebook: `Action Recognition Notebook <../notebooks/action_notebook.ipynb>`_
+
 Cette composante vise à identifier des comportements suspects ou anormaux pouvant indiquer une menace potentielle.
 
 Méthodologie
