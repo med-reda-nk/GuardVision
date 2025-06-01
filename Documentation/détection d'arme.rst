@@ -1,6 +1,8 @@
 Détection d'Armes
 =================
 
+Check the notebook: `Weapon Detection Notebook <../notebooks/weapon_notebook.ipynb>`_
+
 La détection d'armes constitue un élément critique de notre système de surveillance. Cette fonctionnalité repose sur des techniques avancées de vision par ordinateur et d'apprentissage profond.
 
 .. figure:: images/yolo.jpg
