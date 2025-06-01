@@ -28,6 +28,9 @@ Applications pratiques
 - Optimisation de la gestion des espaces publics
 - Identification des goulots d'étranglement potentiels
 
+Check the notebook: `Crowd Density notebook <notebooks/Crowd_Density_CV.ipynb>`_
+
+
 Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
 -------------------------------------------------------------------
 
