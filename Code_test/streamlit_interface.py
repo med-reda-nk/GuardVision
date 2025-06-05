@@ -1,146 +1,704 @@
-    import streamlit as st
-    import cv2
-    import numpy as np
-    from PIL import Image
-    import time
-    import queue
+import streamlit as st
+import cv2
+import numpy as np
+import time
+import queue
+import tensorflow as tf
+import os
+from threading import Thread
+from collections import deque
+import mediapipe as mp
+import torch
 
-    def main():
-        # Set page config
-        st.set_page_config(
-              page_title="GuardVision",
-            page_icon="👁️",
-            layout="wide"
+# Disable oneDNN optimizations for reproducibility
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
+
+class OptimizedPoseDetector:
+    def __init__(self, mode=False, upBody=False, smooth=True, detectionCon=0.5, trackCon=0.5):
+        self.mode = mode
+        self.upBody = upBody
+        self.smooth = smooth
+        self.detectionCon = detectionCon
+        self.trackCon = trackCon
+
+        self.mpDraw = mp.solutions.drawing_utils
+        self.mpPose = mp.solutions.pose
+        self.pose = self.mpPose.Pose(
+            static_image_mode=self.mode,
+            model_complexity=1,
+            smooth_landmarks=self.smooth,
+            enable_segmentation=False,
+            smooth_segmentation=False,
+            min_detection_confidence=self.detectionCon,
+            min_tracking_confidence=self.trackCon
         )
 
-        # Custom CSS
-        st.markdown("""
-            <style>
-            .main {
-                background-color: #f5f5f5;
-            }
-            .stButton>button {
-                width: 100%;
-                border-radius: 5px;
-                height: 3em;
-            }
-            .css-1d391kg {
-                padding: 1rem;
-            }
-            </style>
-        """, unsafe_allow_html=True)
+    def findPose(self, img, draw=True):
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        self.results = self.pose.process(imgRGB)
 
-        # Title and description
-        st.title("🤖 GuardVision")
-        st.markdown("""
-            Real-time object detection and face recognition system powered by YOLOv3 and custom face detection models.
-        """)
+        if self.results.pose_landmarks and draw:
+            self.mpDraw.draw_landmarks(img, self.results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
+        return img
 
-        # Sidebar controls
-        with st.sidebar:
-            st.header("⚙️ Controls")
-            
-            # Model selection
-            st.subheader("Model Selection")
-            use_action = st.checkbox("Action Recognation", value=True)
-            use_crowd = st.checkbox("Crowd Density", value=True)
-            
-            # Confidence threshold
-            st.subheader("Detection Settings")
-            conf_threshold = st.slider("Confidence Threshold", 0.0, 1.0, 0.5, 0.05)
-            
-            # Display options
-            st.subheader("Display Options")
-            show_fps = st.checkbox("Show FPS", value=True)
-            show_boxes = st.checkbox("Show Detection Boxes", value=True)
-            
-            # Status indicators
-            st.subheader("System Status")
-            status_placeholder = st.empty()
-            
-            # Stop button
-            stop_button = st.button("🛑 Stop Processing", type="primary")
+    def findPosition(self, img, draw=True):
+        lmList = []
+        if self.results.pose_landmarks:
+            h, w, _ = img.shape
+            for id, lm in enumerate(self.results.pose_landmarks.landmark):
+                cx, cy = int(lm.x * w), int(lm.y * h)
+                lmList.append([id, cx, cy])
+                if draw:
+                    cv2.circle(img, (cx, cy), 3, (255, 0, 0), cv2.FILLED)
+        return lmList
 
-        # Initialize model manager
-        manager = ModelManager()
-        
-        # Load models
-        if use_yolo:
-            manager.load_model("action", "action_model.keras")
-        if use_face:
-            manager.load_model("crowd", "crowd_model.keras")
-        
-        # Start processing
-        manager.start_processing()
-        
-        # Create columns for video feed and stats
+
+class OptimizedModelManager:
+    def __init__(self):
+        self.process_thread = None
+        self.models = {}
+        self.tflite_models = {}
+        self.input_queue = queue.Queue(maxsize=3)
+        self.output_queue = queue.Queue(maxsize=3)
+        self.running = False
+        self.last_prediction = None
+        self.message_history = deque(maxlen=20)
+        self.frame_skip_counter = 0
+        self.process_every_n_frames = 3
+
+        # Track last detections
+        self.last_detections = {
+            "action": None,
+            "crowd": None
+        }
+
+        # Define model thresholds and class names
+        self.model_config = {
+            "action": {
+                "threshold": 0.7,
+                "class_names": ['Abuse', 'Arrest', 'Arson', 'Assault', 'Burglary', 'Explosion', 'Fighting', "Normal",
+                                'Robbery', 'Shooting', 'Shoplifting', 'Stealing', 'Vandalism']
+            },
+            "crowd": {
+                "threshold": 0.5,  # Reasonable threshold for crowd detection
+                "density": 0
+            }
+        }
+
+        # Initialize optimized components
+        self.pose_detector = OptimizedPoseDetector()
+
+        # Load YOLOv5 with optimizations
+        try:
+            self.yolo_model = torch.hub.load('ultralytics/yolov5', 'yolov5n')
+            self.yolo_model.conf = 0.6
+            self.yolo_model.iou = 0.45
+            self.yolo_model.classes = [0]  # Only detect persons
+
+            # Set device
+            self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            self.yolo_model.to(self.device)
+            print(f"Using device: {self.device}")
+        except Exception as e:
+            print(f"Error loading YOLO model: {str(e)}")
+            self.yolo_model = None
+
+    def load_model(self, model_name, model_path):
+        """Load and optimize model with TensorFlow Lite"""
+        try:
+            if not os.path.exists(model_path):
+                st.error(f"Model not found at: {model_path}")
+                return False
+
+            # Load original Keras model
+            model = tf.keras.models.load_model(model_path)
+
+            # DEBUG: Print model information
+            print(f"\n=== DEBUG: {model_name} Model Info ===")
+            print(f"Input shape: {model.input_shape}")
+            print(f"Output shape: {model.output_shape}")
+            model.summary()
+            print("=" * 50)
+
+            # Convert to TensorFlow Lite for optimization
+            converter = tf.lite.TFLiteConverter.from_keras_model(model)
+            converter.optimizations = [tf.lite.Optimize.DEFAULT]
+
+            # Convert to TFLite
+            tflite_model = converter.convert()
+
+            # Create interpreter
+            interpreter = tf.lite.Interpreter(model_content=tflite_model)
+            interpreter.allocate_tensors()
+
+            # Get input and output details
+            input_details = interpreter.get_input_details()
+            output_details = interpreter.get_output_details()
+
+            # DEBUG: Print TFLite details
+            print(f"\n=== DEBUG: {model_name} TFLite Details ===")
+            print(f"Input details: {input_details}")
+            print(f"Output details: {output_details}")
+            print("=" * 50)
+
+            # Store TFLite model
+            self.tflite_models[model_name] = {
+                'interpreter': interpreter,
+                'input_details': input_details,
+                'output_details': output_details
+            }
+
+            st.success(f"{model_name} successfully loaded and optimized with TensorFlow Lite")
+            return True
+
+        except Exception as e:
+            st.error(f"Failed to load {model_name}: {str(e)}")
+            print(f"Full error: {e}")
+            return False
+
+    def process_frame(self, frame):
+        """Process frame through models with enhanced debugging"""
+        # Skip frames for performance
+        self.frame_skip_counter += 1
+        if self.frame_skip_counter % self.process_every_n_frames != 0:
+            return {"detections": self.last_detections, "pose_landmarks": None}
+
+        # Resize frame for faster processing
+        small_frame = cv2.resize(frame, (320, 240))
+
+        detections = {}
+        pose_landmarks = []
+
+        # Process with TensorFlow Lite models - BOTH models will be processed
+        for model_name, model_info in self.tflite_models.items():
+            try:
+                interpreter = model_info['interpreter']
+                input_details = model_info['input_details']
+                output_details = model_info['output_details']
+
+                # Get expected input shape
+                input_shape = input_details[0]['shape']
+                expected_height, expected_width = input_shape[1], input_shape[2]
+
+                # Resize frame to expected input size
+                frame_resized = cv2.resize(frame, (expected_width, expected_height))
+                blob = frame_resized.astype(np.float32) / 255.0
+                blob = np.expand_dims(blob, axis=0)
+
+                # Set input tensor
+                interpreter.set_tensor(input_details[0]['index'], blob)
+
+                # Run inference
+                interpreter.invoke()
+
+                # Get output
+                preds = interpreter.get_tensor(output_details[0]['index'])
+
+                # Process ACTION model predictions
+                if model_name == "action":
+                    print(f"\n=== DEBUG: Action Model Output ===")
+                    print(f"Raw prediction shape: {preds.shape}")
+                    print(f"Raw prediction values: {preds}")
+
+                    # Get top class prediction
+                    if len(preds.shape) > 1:
+                        preds = preds[0]  # Remove batch dimension if present
+
+                    class_id = np.argmax(preds)
+                    confidence = preds[class_id]
+
+                    print(f"Predicted class ID: {class_id}")
+                    print(f"Confidence: {confidence}")
+                    print(f"Threshold: {self.model_config['action']['threshold']}")
+                    print(f"Above threshold: {confidence > self.model_config['action']['threshold']}")
+
+                    if confidence > self.model_config["action"]["threshold"]:
+                        class_name = self.model_config["action"]["class_names"][class_id]
+                        detections["action"] = {
+                            "class": class_name,
+                            "confidence": float(confidence)
+                        }
+                        self._add_detection_message(model_name, class_name, confidence)
+                        print(f"ACTION DETECTED: {class_name} ({confidence:.3f})")
+                    else:
+                        # Still show what was detected even if below threshold
+                        class_name = self.model_config["action"]["class_names"][class_id]
+                        print(f"Action below threshold: {class_name} ({confidence:.3f})")
+                    print("=" * 50)
+
+                # Process CROWD model predictions
+                elif model_name == "crowd":
+                    print(f"\n=== DEBUG: Crowd Model Output ===")
+                    print(f"Raw prediction shape: {preds.shape}")
+                    print(f"Raw prediction values: {preds}")
+
+                    # Handle different output shapes
+                    if len(preds.shape) == 4:  # Density map (batch, height, width, channels)
+                        density_map = preds[0]
+                        if len(density_map.shape) == 3:
+                            density_map = density_map[:, :, 0]  # Take first channel
+
+                        # Calculate total density and max density
+                        total_density = np.sum(density_map)
+                        max_density = np.max(density_map)
+                        mean_density = np.mean(density_map)
+
+                        print(f"Density map shape: {density_map.shape}")
+                        print(f"Total density: {total_density}")
+                        print(f"Max density: {max_density}")
+                        print(f"Mean density: {mean_density}")
+
+                        # Use total density as the crowd measure
+                        density = float(total_density)
+
+                    elif len(preds.shape) == 2:  # Single value output (batch, 1)
+                        density = float(preds[0, 0])
+                        print(f"Single density value: {density}")
+
+                    elif len(preds.shape) == 1:  # Single value output (1,)
+                        density = float(preds[0])
+                        print(f"Single density value: {density}")
+
+                    else:
+                        print(f"Unexpected output shape: {preds.shape}")
+                        density = float(np.sum(preds))
+                        print(f"Sum of all values: {density}")
+
+                    print(f"Threshold: {self.model_config['crowd']['threshold']}")
+                    print(f"Density > Threshold: {density > self.model_config['crowd']['threshold']}")
+
+                    if density > self.model_config["crowd"]["threshold"]:
+                        detections["crowd"] = {
+                            "density": density
+                        }
+                        self._add_detection_message(model_name, None, density)
+                        print(f"CROWD DETECTED: Density {density:.4f}")
+                    else:
+                        # DEBUG: Still log low density values
+                        print(f"Crowd density below threshold: {density:.4f}")
+                    print("=" * 50)
+
+            except Exception as e:
+                print(f"TFLite prediction error in {model_name}: {str(e)}")
+                import traceback
+                traceback.print_exc()
+
+        # YOLO detection (same as before)
+        if self.yolo_model is not None:
+            try:
+                with torch.no_grad():
+                    results = self.yolo_model(small_frame, size=320)
+                    yolo_detections = results.xyxy[0].cpu().numpy()
+
+                scale_x = frame.shape[1] / small_frame.shape[1]
+                scale_y = frame.shape[0] / small_frame.shape[0]
+
+                max_detections = 5
+                processed_count = 0
+
+                for detection in yolo_detections:
+                    if processed_count >= max_detections:
+                        break
+
+                    x1, y1, x2, y2, conf, cls = detection
+
+                    if conf > 0.5 and cls == 0:
+                        x1, y1, x2, y2 = int(x1 * scale_x), int(y1 * scale_y), int(x2 * scale_x), int(y2 * scale_y)
+                        x1, y1 = max(0, x1), max(0, y1)
+                        x2, y2 = min(frame.shape[1], x2), min(frame.shape[0], y2)
+
+                        if x2 > x1 and y2 > y1:
+                            cropped_img = frame[y1:y2, x1:x2]
+
+                            if cropped_img.shape[0] > 50 and cropped_img.shape[1] > 50:
+                                cropped_img = self.pose_detector.findPose(cropped_img, draw=False)
+                                lmList = self.pose_detector.findPosition(cropped_img, draw=False)
+
+                                if lmList:
+                                    adjusted_landmarks = []
+                                    for id, cx, cy in lmList:
+                                        original_cx = cx + x1
+                                        original_cy = cy + y1
+                                        adjusted_landmarks.append([id, original_cx, original_cy])
+                                    pose_landmarks.append(adjusted_landmarks)
+
+                        processed_count += 1
+
+            except Exception as e:
+                print(f"YOLO processing error: {str(e)}")
+
+        # Update last detections
+        if detections:
+            self.last_detections.update(detections)
+
+        return {
+            "detections": detections if detections else None,
+            "pose_landmarks": pose_landmarks if pose_landmarks else None
+        }
+
+    def _add_detection_message(self, model_name, class_name, value):
+        """Add message only if detection exceeds threshold and is different from last detection"""
+        timestamp = time.strftime("%H:%M:%S")
+        if model_name == "action":
+            if (self.last_detections.get("action") is None or
+                    self.last_detections["action"].get("class") != class_name):
+                self.message_history.append(
+                    f"🚨 [{timestamp}] Action Detected: {class_name} (Confidence: {value:.2f})"
+                )
+        elif model_name == "crowd":
+            if (self.last_detections.get("crowd") is None or
+                    abs(self.last_detections["crowd"].get("density", 0) - value) > 0.1):
+                self.message_history.append(
+                    f"👥 [{timestamp}] Crowd density: {value:.4f}"
+                )
+
+    def start_processing(self):
+        self.running = True
+        self.process_thread = Thread(target=self._process_loop, daemon=True)
+        self.process_thread.start()
+
+    def stop_processing(self):
+        self.running = False
+        if self.process_thread:
+            self.process_thread.join(timeout=2)
+
+    def _process_loop(self):
+        while self.running:
+            try:
+                frame = self.input_queue.get(timeout=0.5)
+                results = self.process_frame(frame)
+
+                try:
+                    self.output_queue.put_nowait(results)
+                except queue.Full:
+                    pass
+
+            except queue.Empty:
+                continue
+            except Exception as e:
+                print(f"Processing error: {str(e)}")
+
+
+def draw_predictions(frame, detections, pose_landmarks):
+    """Draw only pose landmarks on frame - model predictions shown in sidebar"""
+    # Only draw pose landmarks on the frame
+    if pose_landmarks:
+        for person_landmarks in pose_landmarks:
+            key_points = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
+            landmarks_dict = {id: (cx, cy) for id, cx, cy in person_landmarks}
+
+            for id, cx, cy in person_landmarks:
+                if id in key_points:
+                    cv2.circle(frame, (cx, cy), 3, (0, 255, 0), thickness=-1)
+
+            connections = [
+                (11, 12), (11, 13), (13, 15), (12, 14), (14, 16),
+                (11, 23), (12, 24), (23, 24), (23, 25), (25, 27),
+                (24, 26), (26, 28),
+            ]
+
+            for start_idx, end_idx in connections:
+                if start_idx in landmarks_dict and end_idx in landmarks_dict:
+                    start_point = landmarks_dict[start_idx]
+                    end_point = landmarks_dict[end_idx]
+                    cv2.line(frame, start_point, end_point, (255, 0, 0), 2)
+
+    return frame
+
+
+def display_message_history(messages):
+    """Display messages efficiently"""
+    if not messages:
+        st.info("System running - no alerts detected")
+    else:
+        recent_messages = list(messages)[-10:]
+        for msg in reversed(recent_messages):
+            if "🚨" in msg:
+                st.error(msg)
+            elif "👥" in msg:
+                st.warning(msg)
+
+
+def main():
+    st.set_page_config(
+        page_title="GuardVision - Dual Model System",
+        page_icon="👁️",
+        layout="wide"
+    )
+
+    st.markdown("""
+        <style>
+        .main { background-color: #0E1117; }
+        .stButton>button {
+            width: 100%;
+            border-radius: 5px;
+            height: 3em;
+            background-color: #FF4B4B;
+            color: white;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.title("👁️ GuardVision - Dual Model System")
+    st.markdown("**Action Recognition + Crowd Density Detection**")
+
+    # Initialize session state
+    if 'manager' not in st.session_state:
+        st.session_state.manager = None
+        st.session_state.cap = None
+        st.session_state.running = False
+
+    with st.sidebar:
+        st.header("⚙️ Control Panel")
+
+        # Model selection - BOTH enabled by default
+        use_action = st.checkbox("Action Recognition", value=True)
+        use_crowd = st.checkbox("Crowd Density", value=True)
+
+        # Model thresholds
+        st.subheader("Model Thresholds")
+        action_threshold = st.slider("Action Confidence Threshold", 0.1, 1.0, 0.7, 0.05)
+        crowd_threshold = st.slider("Crowd Density Threshold", 0.1, 2.0, 0.5, 0.1)
+
+        # Performance settings
+        st.subheader("Performance Settings")
+        frame_skip = st.slider("Frame Skip", 1, 10, 3)
+
+        # Camera settings
+        st.subheader("Camera Settings")
+        camera_resolution = st.selectbox("Resolution", ["320x240", "640x480", "1280x720"], index=1)
+
+        # Model status
+        st.subheader("📊 Model Status")
+        if st.session_state.manager and st.session_state.manager.tflite_models:
+            for model_name in st.session_state.manager.tflite_models.keys():
+                st.success(f"✅ {model_name.capitalize()} Model Loaded")
+
+        # Control buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            start_button = st.button("🚀 Start", type="primary")
+        with col2:
+            stop_button = st.button("🛑 Stop", type="secondary")
+
+    # Handle start button
+    if start_button and not st.session_state.running:
+        if not use_action and not use_crowd:
+            st.error("Please select at least one model to use!")
+        else:
+            st.session_state.manager = OptimizedModelManager()
+            st.session_state.manager.process_every_n_frames = frame_skip
+
+            # Update thresholds
+            st.session_state.manager.model_config["action"]["threshold"] = action_threshold
+            st.session_state.manager.model_config["crowd"]["threshold"] = crowd_threshold
+
+            # Load models
+            models_loaded = False
+            models_to_load = []
+
+            if use_action:
+                models_to_load.append(("action", "models/action_model.keras"))
+            if use_crowd:
+                models_to_load.append(("crowd", "models/crowd_model.keras"))
+
+            with st.spinner("Loading models..."):
+                for model_name, model_path in models_to_load:
+                    if st.session_state.manager.load_model(model_name, model_path):
+                        models_loaded = True
+                    else:
+                        st.error(f"Failed to load {model_name} model from {model_path}")
+
+            if models_loaded:
+                st.session_state.manager.start_processing()
+
+                try:
+                    st.session_state.cap = cv2.VideoCapture(0)
+
+                    if not st.session_state.cap.isOpened():
+                        st.error("Could not open camera. Please check if camera is available.")
+                        st.session_state.running = False
+                    else:
+                        width, height = map(int, camera_resolution.split('x'))
+                        st.session_state.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                        st.session_state.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+                        st.session_state.cap.set(cv2.CAP_PROP_FPS, 30)
+
+                        st.session_state.running = True
+
+                        # Show which models are running
+                        active_models = [name for name in st.session_state.manager.tflite_models.keys()]
+                        st.success(f"System started! Active models: {', '.join(active_models)}")
+
+                except Exception as e:
+                    st.error(f"Error initializing camera: {str(e)}")
+                    st.session_state.running = False
+            else:
+                st.error("No models loaded successfully. Please check model paths.")
+
+    # Handle stop button
+    if stop_button and st.session_state.running:
+        if st.session_state.manager:
+            st.session_state.manager.stop_processing()
+        if st.session_state.cap:
+            st.session_state.cap.release()
+        st.session_state.running = False
+        st.success("System stopped successfully!")
+
+    # Main interface
+    if st.session_state.running and st.session_state.manager and st.session_state.cap:
         col1, col2 = st.columns([3, 1])
-        
+
         with col1:
             st.subheader("📹 Live Feed")
-            stframe = st.empty()
-            
-        with col2:
-            st.subheader("📊 Statistics")
-            fps_placeholder = st.empty()
-            detections_placeholder = st.empty()
-        
-        # Initialize video capture
-        cap = cv2.VideoCapture(0)
-        
-        # FPS calculation variables
-        prev_time = 0
-        fps = 0
-        
-        while cap.isOpened() and not stop_button:
-            ret, frame = cap.read()
-            if not ret:
-                st.error("Failed to access camera")
-                break
-                
-            # Calculate FPS
-            current_time = time.time()
-            fps = 1/(current_time - prev_time) if prev_time > 0 else 0
-            prev_time = current_time
-            
-            # Add frame to processing queue
-            manager.input_queue.put(frame)
-            
-            # Get results if available
-            try:
-                results = manager.output_queue.get_nowait()
-                # Update detection statistics
-                detections_placeholder.metric("Detections", len(results))
-            except queue.Empty:
-                pass
-            
-            # Convert frame to RGB for display
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            
-            # Display FPS if enabled
-            if show_fps:
-                cv2.putText(frame_rgb, f"FPS: {fps:.1f}", (10, 30),
-                           cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            
-            # Display the frame
-            stframe.image(frame_rgb, channels="RGB", use_column_width=True)
-            
-            # Update status
-            status_placeholder.success("System Running")
-            
-            # Update FPS display
-            fps_placeholder.metric("FPS", f"{fps:.1f}")
-            
-            # Add a small delay to prevent overwhelming the system
-            time.sleep(0.01)
-            
-        # Cleanup
-        manager.stop_processing()
-        cap.release()
-        status_placeholder.error("System Stopped")
+            video_placeholder = st.empty()
+            status_placeholder = st.empty()
 
-    if __name__ == "__main__":
-        main()
-        
-# To run the Streamlit app, use the following command in your terminal:
-# streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+        with col2:
+            st.subheader("📊 Real-time Results")
+
+            # Show active models
+            active_models = list(st.session_state.manager.tflite_models.keys())
+            for model in active_models:
+                st.info(f"🔄 {model.capitalize()} Model Active")
+
+            # Show current thresholds
+            st.markdown("**Current Thresholds:**")
+            st.write(f"Action: {st.session_state.manager.model_config['action']['threshold']}")
+            st.write(f"Crowd: {st.session_state.manager.model_config['crowd']['threshold']}")
+
+            # Real-time model results display
+            results_placeholder = st.empty()
+
+            st.subheader("🔔 Detection Log")
+            message_placeholder = st.empty()
+
+        # Performance tracking
+        prev_time = 0
+        frame_count = 0
+
+        # Main processing loop
+        while st.session_state.running:
+            try:
+                ret, frame = st.session_state.cap.read()
+                if not ret:
+                    st.error("Camera error - could not read frame")
+                    break
+
+                current_time = time.time()
+                fps = 1 / (current_time - prev_time) if prev_time > 0 else 0
+                prev_time = current_time
+                frame_count += 1
+
+                try:
+                    st.session_state.manager.input_queue.put_nowait(frame.copy())
+                except queue.Full:
+                    pass
+
+                results = None
+                try:
+                    results = st.session_state.manager.output_queue.get_nowait()
+                except queue.Empty:
+                    pass
+
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                if results:
+                    detections = results.get("detections")
+                    pose_landmarks = results.get("pose_landmarks")
+                    frame_rgb = draw_predictions(frame_rgb, detections, pose_landmarks)
+
+                cv2.putText(frame_rgb, f"FPS: {fps:.1f}", (10, frame_rgb.shape[0] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+
+                video_placeholder.image(frame_rgb, channels="RGB", use_column_width=True)
+
+                # Enhanced status display
+                active_detections = []
+                if results and results.get("detections"):
+                    for model_name, detection in results["detections"].items():
+                        if detection:
+                            active_detections.append(model_name)
+
+                status_text = f"🟢 Running | Frame: {frame_count} | Models: {len(active_models)}"
+                if active_detections:
+                    status_text += f" | Active: {', '.join(active_detections)}"
+
+                status_placeholder.success(status_text)
+
+                # Display real-time model results in sidebar
+                with results_placeholder.container():
+                    if results and results.get("detections"):
+                        detections = results["detections"]
+
+                        # Action Recognition Results
+                        if "action" in detections and detections["action"]:
+                            action_data = detections["action"]
+                            if action_data["class"] in ['Normal']:
+                                st.success(f"🎯 **Action:** {action_data['class']} ({action_data['confidence']:.3f})")
+                            elif action_data["class"] in ['Fighting', 'Assault', 'Abuse', 'Shooting']:
+                                st.error(f"🚨 **Action:** {action_data['class']} ({action_data['confidence']:.3f})")
+                            else:
+                                st.warning(f"⚠️ **Action:** {action_data['class']} ({action_data['confidence']:.3f})")
+                        else:
+                            st.info("🎯 **Action:** No significant activity detected")
+
+                        # Crowd Density Results
+                        if "crowd" in detections and detections["crowd"]:
+                            crowd_data = detections["crowd"]
+                            density = crowd_data["density"]
+
+                            if density > 2.0:
+                                st.error(f"👥 **Crowd Density:** {density:.4f} (Very High)")
+                            elif density > 1.0:
+                                st.warning(f"👥 **Crowd Density:** {density:.4f} (High)")
+                            elif density > 0.5:
+                                st.info(f"👥 **Crowd Density:** {density:.4f} (Medium)")
+                            else:
+                                st.success(f"👥 **Crowd Density:** {density:.4f} (Low)")
+                        else:
+                            st.info("👥 **Crowd Density:** Below threshold")
+                    else:
+                        st.info("🎯 **Action:** No significant activity detected")
+                        st.info("👥 **Crowd Density:** Below threshold")
+
+                with message_placeholder.container():
+                    display_message_history(st.session_state.manager.message_history)
+
+                if stop_button:
+                    break
+
+                time.sleep(0.01)
+
+            except Exception as e:
+                st.error(f"Error in main loop: {str(e)}")
+                break
+
+    else:
+        st.info("Configure your models and click 'Start' to begin detection")
+
+        with st.expander("ℹ️ System Information"):
+            st.markdown("""
+            **This system can run both models simultaneously:**
+
+            🎯 **Action Recognition Model:**
+            - Detects various actions like fighting, theft, etc.
+            - Adjustable confidence threshold
+            - Real-time classification
+
+            👥 **Crowd Density Model:**
+            - Estimates crowd density in the scene
+            - Handles different output formats (density maps/single values)
+            - Adjustable density threshold
+
+            **Performance Tips:**
+            - Both models will process every frame (subject to frame skipping)
+            - Check console output for detailed debug information
+            - Adjust thresholds based on your specific use case
+            - Lower frame skip for more responsive detection
+            """)
+
+
+if __name__ == "__main__":
+    main()
