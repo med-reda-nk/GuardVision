@@ -303,7 +303,7 @@ class OptimizedModelManager:
         self.last_prediction = None
         self.message_history = deque(maxlen=20)
         self.frame_skip_counter = 0
-        self.process_every_n_frames = 3
+        self.process_every_n_frames = 2
 
         # Track last detections
         self.last_detections = {
