@@ -9,9 +9,247 @@ from threading import Thread
 from collections import deque
 import mediapipe as mp
 import torch
+from datetime import datetime, timedelta
+import json
+from collections import Counter, defaultdict
+import re
 
 # Disable oneDNN optimizations for reproducibility
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
+
+
+# Add this class after OptimizedPoseDetector class
+class NLPReportGenerator:
+    def __init__(self):
+        self.daily_events = defaultdict(list)
+        self.session_start_time = datetime.now()
+        self.threat_keywords = {
+            'high_threat': ['shooting', 'assault', 'fighting', 'abuse', 'explosion', 'arson'],
+            'medium_threat': ['robbery', 'burglary', 'stealing', 'shoplifting', 'vandalism'],
+            'crowd_related': ['crowd', 'density', 'gathering']
+        }
+
+    def log_event(self, event_type, details, timestamp=None):
+        """Log events for daily report generation"""
+        if timestamp is None:
+            timestamp = datetime.now()
+
+        event_data = {
+            'timestamp': timestamp,
+            'type': event_type,
+            'details': details,
+            'hour': timestamp.hour
+        }
+
+        date_key = timestamp.strftime('%Y-%m-%d')
+        self.daily_events[date_key].append(event_data)
+
+    def generate_daily_summary(self, target_date=None):
+        """Generate NLP-based daily summary report"""
+        if target_date is None:
+            target_date = datetime.now().strftime('%Y-%m-%d')
+
+        events = self.daily_events.get(target_date, [])
+
+        if not events:
+            return "No significant events recorded for today."
+
+        # Analyze events
+        analysis = self._analyze_events(events)
+
+        # Generate natural language report
+        report = self._generate_nlp_report(analysis, target_date)
+
+        return report
+
+    def _analyze_events(self, events):
+        """Analyze events and extract patterns"""
+        analysis = {
+            'total_events': len(events),
+            'threat_levels': {'high': 0, 'medium': 0, 'low': 0},
+            'hourly_distribution': defaultdict(int),
+            'event_types': Counter(),
+            'peak_hours': [],
+            'threat_summary': [],
+            'crowd_events': 0,
+            'duration_minutes': 0
+        }
+
+        # Calculate session duration
+        if events:
+            start_time = min(event['timestamp'] for event in events)
+            end_time = max(event['timestamp'] for event in events)
+            analysis['duration_minutes'] = int((end_time - start_time).total_seconds() / 60)
+
+        for event in events:
+            # Categorize threat level
+            event_detail = event['details'].lower()
+
+            if any(keyword in event_detail for keyword in self.threat_keywords['high_threat']):
+                analysis['threat_levels']['high'] += 1
+                analysis['threat_summary'].append(
+                    f"High threat: {event['details']} at {event['timestamp'].strftime('%H:%M')}")
+            elif any(keyword in event_detail for keyword in self.threat_keywords['medium_threat']):
+                analysis['threat_levels']['medium'] += 1
+                analysis['threat_summary'].append(
+                    f"Medium threat: {event['details']} at {event['timestamp'].strftime('%H:%M')}")
+            else:
+                analysis['threat_levels']['low'] += 1
+
+            # Track crowd events
+            if any(keyword in event_detail for keyword in self.threat_keywords['crowd_related']):
+                analysis['crowd_events'] += 1
+
+            # Hourly distribution
+            analysis['hourly_distribution'][event['hour']] += 1
+
+            # Event types
+            analysis['event_types'][event['type']] += 1
+
+        # Find peak hours
+        if analysis['hourly_distribution']:
+            max_events = max(analysis['hourly_distribution'].values())
+            analysis['peak_hours'] = [hour for hour, count in analysis['hourly_distribution'].items()
+                                      if count == max_events]
+
+        return analysis
+
+    def _generate_nlp_report(self, analysis, date):
+        """Generate natural language report using NLP techniques"""
+        report_parts = []
+
+        # Header
+        report_parts.append(f"📊 DAILY SURVEILLANCE REPORT - {date}")
+        report_parts.append("=" * 50)
+
+        # Executive Summary
+        total_events = analysis['total_events']
+        duration = analysis['duration_minutes']
+
+        if total_events == 0:
+            return "No security events detected during the monitoring period."
+
+        # Threat assessment
+        high_threats = analysis['threat_levels']['high']
+        medium_threats = analysis['threat_levels']['medium']
+
+        if high_threats > 0:
+            threat_status = "🔴 HIGH RISK"
+            summary = f"Critical security situation detected with {high_threats} high-priority threat(s)."
+        elif medium_threats > 0:
+            threat_status = "🟡 MEDIUM RISK"
+            summary = f"Moderate security concerns identified with {medium_threats} medium-priority event(s)."
+        else:
+            threat_status = "🟢 LOW RISK"
+            summary = "Routine monitoring period with no significant security threats."
+
+        report_parts.append(f"\n🎯 THREAT ASSESSMENT: {threat_status}")
+        report_parts.append(f"📝 SUMMARY: {summary}")
+
+        # Operational metrics
+        report_parts.append(f"\n📈 OPERATIONAL METRICS:")
+        report_parts.append(f"   • Monitoring Duration: {duration} minutes")
+        report_parts.append(f"   • Total Events Detected: {total_events}")
+        report_parts.append(f"   • Events per Hour: {total_events / max(1, duration / 60):.1f}")
+
+        # Activity patterns
+        if analysis['peak_hours']:
+            peak_times = [f"{hour:02d}:00" for hour in analysis['peak_hours']]
+            report_parts.append(f"   • Peak Activity Hours: {', '.join(peak_times)}")
+
+        # Threat breakdown
+        if high_threats > 0 or medium_threats > 0:
+            report_parts.append(f"\n⚠️  THREAT BREAKDOWN:")
+            if high_threats > 0:
+                report_parts.append(f"   • High Priority Threats: {high_threats}")
+            if medium_threats > 0:
+                report_parts.append(f"   • Medium Priority Threats: {medium_threats}")
+
+        # Crowd analysis
+        if analysis['crowd_events'] > 0:
+            crowd_percentage = (analysis['crowd_events'] / total_events) * 100
+            report_parts.append(f"\n👥 CROWD ANALYSIS:")
+            report_parts.append(f"   • Crowd-related Events: {analysis['crowd_events']} ({crowd_percentage:.1f}%)")
+
+        # Detailed threat log
+        if analysis['threat_summary']:
+            report_parts.append(f"\n🚨 CRITICAL EVENTS LOG:")
+            for threat in analysis['threat_summary'][:5]:  # Show top 5
+                report_parts.append(f"   • {threat}")
+            if len(analysis['threat_summary']) > 5:
+                report_parts.append(f"   • ... and {len(analysis['threat_summary']) - 5} more events")
+
+        # Recommendations
+        recommendations = self._generate_recommendations(analysis)
+        if recommendations:
+            report_parts.append(f"\n💡 RECOMMENDATIONS:")
+            for rec in recommendations:
+                report_parts.append(f"   • {rec}")
+
+        return "\n".join(report_parts)
+
+    def _generate_recommendations(self, analysis):
+        """Generate contextual recommendations based on analysis"""
+        recommendations = []
+
+        high_threats = analysis['threat_levels']['high']
+        medium_threats = analysis['threat_levels']['medium']
+        crowd_events = analysis['crowd_events']
+        peak_hours = analysis['peak_hours']
+
+        if high_threats > 0:
+            recommendations.append("Immediate security response required for high-priority threats")
+            recommendations.append("Consider increasing security personnel during peak hours")
+
+        if medium_threats > 5:
+            recommendations.append("Review security protocols for theft prevention")
+
+        if crowd_events > analysis['total_events'] * 0.3:
+            recommendations.append("Implement crowd management strategies")
+            recommendations.append("Monitor for overcrowding during peak periods")
+
+        if peak_hours:
+            peak_str = ', '.join([f"{hour:02d}:00" for hour in peak_hours])
+            recommendations.append(f"Increase surveillance focus during peak hours: {peak_str}")
+
+        if not recommendations:
+            recommendations.append("Continue routine monitoring protocols")
+
+        return recommendations
+
+
+
+
+
+
+# Add this function to display daily report in sidebar
+def display_daily_report_section(manager):
+    """Display daily report section in sidebar"""
+    if manager and hasattr(manager, 'nlp_reporter'):
+        st.subheader("📋 Daily Report")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("📊 Generate Report", key="generate_report_button"):
+                report = manager.nlp_reporter.generate_daily_summary()
+                st.session_state.daily_report = report
+
+        with col2:
+            if st.button("💾 Save Report", key="save_report_button"):
+                if hasattr(st.session_state, 'daily_report'):
+                    filename = f"surveillance_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+                    st.download_button(
+                        label="Download Report",
+                        data=st.session_state.daily_report,
+                        file_name=filename,
+                        mime="text/plain"
+                    )
+
+        # Display report if generated
+        if hasattr(st.session_state, 'daily_report'):
+            with st.expander("📄 View Report", expanded=False):
+                st.text(st.session_state.daily_report)
 
 
 class OptimizedPoseDetector:
@@ -159,11 +397,6 @@ class OptimizedModelManager:
 
     def process_frame(self, frame):
         """Process frame through models with enhanced debugging"""
-        # Skip frames for performance
-        self.frame_skip_counter += 1
-        if self.frame_skip_counter % self.process_every_n_frames != 0:
-            return {"detections": self.last_detections, "pose_landmarks": None}
-
         # Resize frame for faster processing
         small_frame = cv2.resize(frame, (320, 240))
 
@@ -337,21 +570,42 @@ class OptimizedModelManager:
             "pose_landmarks": pose_landmarks if pose_landmarks else None
         }
 
+    def initialize_nlp_reporter(self):
+        """Initialize NLP report generator"""
+        self.nlp_reporter = NLPReportGenerator()
+
     def _add_detection_message(self, model_name, class_name, value):
-        """Add message only if detection exceeds threshold and is different from last detection"""
+        """Add message and log event for NLP reporting"""
         timestamp = time.strftime("%H:%M:%S")
+        current_time = datetime.now()
+
         if model_name == "action":
             if (self.last_detections.get("action") is None or
                     self.last_detections["action"].get("class") != class_name):
-                self.message_history.append(
-                    f"🚨 [{timestamp}] Action Detected: {class_name} (Confidence: {value:.2f})"
-                )
+                message = f"🚨 [{timestamp}] Action Detected: {class_name} (Confidence: {value:.2f})"
+                self.message_history.append(message)
+
+                # Log event for NLP report
+                if hasattr(self, 'nlp_reporter'):
+                    self.nlp_reporter.log_event(
+                        event_type="action_detection",
+                        details=f"{class_name} detected with {value:.2f} confidence",
+                        timestamp=current_time
+                    )
+
         elif model_name == "crowd":
             if (self.last_detections.get("crowd") is None or
                     abs(self.last_detections["crowd"].get("density", 0) - value) > 0.1):
-                self.message_history.append(
-                    f"👥 [{timestamp}] Crowd density: {value:.4f}"
-                )
+                message = f"👥 [{timestamp}] Crowd density: {value:.4f}"
+                self.message_history.append(message)
+
+                # Log event for NLP report
+                if hasattr(self, 'nlp_reporter'):
+                    self.nlp_reporter.log_event(
+                        event_type="crowd_detection",
+                        details=f"Crowd density level {value:.4f}",
+                        timestamp=current_time
+                    )
 
     def start_processing(self):
         self.running = True
@@ -471,7 +725,10 @@ def main():
 
         # Model status
         st.subheader("📊 Model Status")
+        display_daily_report_section(st.session_state.manager)
+
         if st.session_state.manager and st.session_state.manager.tflite_models:
+            # Daily Report Section
             for model_name in st.session_state.manager.tflite_models.keys():
                 st.success(f"✅ {model_name.capitalize()} Model Loaded")
 
@@ -488,7 +745,7 @@ def main():
             st.error("Please select at least one model to use!")
         else:
             st.session_state.manager = OptimizedModelManager()
-            st.session_state.manager.process_every_n_frames = frame_skip
+            st.session_state.manager.initialize_nlp_reporter()
 
             # Update thresholds
             st.session_state.manager.model_config["action"]["threshold"] = action_threshold
