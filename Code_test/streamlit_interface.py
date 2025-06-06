@@ -149,7 +149,7 @@ class OptimizedModelManager:
                 'output_details': output_details
             }
 
-            st.success(f"{model_name} successfully loaded and optimized with TensorFlow Lite")
+            st.success(f"{model_name} successfully loaded")
             return True
 
         except Exception as e:
@@ -440,8 +440,8 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    st.title("👁️ GuardVision - Dual Model System")
-    st.markdown("**Action Recognition + Crowd Density Detection**")
+    st.title("👁️ GuardVision")
+    st.markdown("**Surveillance System**")
 
     # Initialize session state
     if 'manager' not in st.session_state:
