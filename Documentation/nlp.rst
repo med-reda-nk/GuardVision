@@ -1,6 +1,8 @@
 Générateur de Rapports de Surveillance
 =====================================
 
+Check the notebook: `Generation de Rapport Notebook <../notebooks/nlp_report_generation.ipynb>`_
+
 Vue d'Ensemble
 --------------
 
