@@ -1,168 +1,205 @@
-Générateur de Rapports NLP
-==========================
+Générateur de Rapports de Surveillance
+=====================================
 
-.. currentmodule:: nlp_report_generator
+Vue d'Ensemble
+--------------
 
-.. autoclass:: NLPReportGenerator
-   :members:
+Le générateur de rapports de surveillance est un système intelligent qui analyse automatiquement les événements de sécurité et produit des rapports quotidiens en langage naturel. Il transforme les données brutes de surveillance en insights actionnables pour les équipes de sécurité.
 
-Aperçu
-------
-
-La classe ``NLPReportGenerator`` fournit une génération automatisée de rapports de surveillance avec des capacités de traitement du langage naturel. Elle analyse les événements de sécurité et produit des résumés quotidiens complets avec évaluation des menaces et recommandations opérationnelles.
-
-Démarrage Rapide
-----------------
-
-.. code-block:: python
-
-   from nlp_report_generator import NLPReportGenerator
-   
-   # Initialiser le générateur
-   generator = NLPReportGenerator()
-   
-   # Enregistrer des événements
-   generator.log_event("alerte_securite", "Mouvement détecté en zone restreinte")
-   generator.log_event("vol", "Incident de vol à l'étalage signalé")
-   
-   # Générer le rapport
-   rapport = generator.generate_daily_summary()
-   print(rapport)
-
-Fonctionnalités Principales
----------------------------
-
-* **Classification Automatique des Menaces** : Événements catégorisés en risque Élevé/Moyen/Faible
-* **Analyse de Motifs** : Identifie les heures de pointe et tendances d'activité
-* **Rapports en Langage Naturel** : Résumés lisibles avec insights actionnables
-* **Surveillance des Foules** : Gestion spéciale des événements liés aux foules
-* **Recommandations Contextuelles** : Suggestions de sécurité basées sur les motifs d'événements
-
-Référence API
--------------
-
-Méthodes Principales
-~~~~~~~~~~~~~~~~~~~~
-
-.. method:: log_event(event_type, details, timestamp=None)
-
-   Enregistre les événements de surveillance pour la génération de rapports.
-   
-   :param str event_type: Catégorie de l'événement
-   :param str details: Description de l'événement
-   :param datetime timestamp: Horodatage optionnel (par défaut maintenant)
-
-.. method:: generate_daily_summary(target_date=None)
-
-   Génère un rapport de surveillance quotidien complet.
-   
-   :param str target_date: Date au format AAAA-MM-JJ (par défaut aujourd'hui)
-   :returns: Chaîne de rapport formatée
-   :rtype: str
-
-Classification des Menaces
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Les événements sont automatiquement classifiés en trois niveaux de menace :
-
-* **Priorité Élevée** 🔴 : tir, agression, bagarre, abus, explosion, incendie criminel
-* **Priorité Moyenne** 🟡 : vol qualifié, cambriolage, vol, vol à l'étalage, vandalisme
-* **Priorité Faible** 🟢 : Tous les autres événements
-
-Structure du Rapport
---------------------
-
-Les rapports générés incluent :
-
-1. **Évaluation des Menaces** - Niveau de risque codé par couleur
-2. **Résumé Exécutif** - Vue d'ensemble de la situation
-3. **Métriques Opérationnelles** - Statistiques d'activité
-4. **Journal des Événements Critiques** - Incidents prioritaires
-5. **Recommandations** - Conseils de sécurité actionnables
-
-Exemple de Sortie
+Objectif Principal
 -----------------
 
-.. code-block:: text
+Ce système vise à :
 
-   📊 RAPPORT DE SURVEILLANCE QUOTIDIEN - 2024-12-15
-   ==================================================
+* **Automatiser l'analyse** des incidents de sécurité quotidiens
+* **Classifier les menaces** selon leur niveau de priorité
+* **Identifier les tendances** et motifs d'activité suspecte
+* **Fournir des recommandations** concrètes aux équipes de sécurité
+* **Générer des rapports** clairs et professionnels
+
+Fonctionnement Général
+---------------------
+
+Le système fonctionne en trois étapes principales :
+
+1. **Collecte des Données**
    
-   🎯 ÉVALUATION DES MENACES : 🟡 RISQUE MOYEN
-   📝 RÉSUMÉ : Préoccupations de sécurité modérées avec 2 événements priorité moyenne.
+   * Enregistrement automatique des événements de sécurité
+   * Horodatage précis de chaque incident
+   * Catégorisation initiale des événements
+
+2. **Analyse Intelligente**
    
-   📈 MÉTRIQUES OPÉRATIONNELLES :
-      • Événements Totaux : 8
-      • Heures de Pointe : 14:00, 18:00
+   * Classification automatique des niveaux de menace
+   * Détection des heures de pointe d'activité
+   * Analyse des motifs de comportement suspect
+   * Évaluation des risques liés aux foules
+
+3. **Génération de Rapports**
    
-   💡 RECOMMANDATIONS :
-      • Augmenter la surveillance pendant les heures de pointe
-      • Réviser les protocoles de sécurité pour la prévention des vols
+   * Création de résumés en langage naturel
+   * Visualisation des métriques clés
+   * Recommandations contextuelles
+   * Format professionnel adapté aux équipes de sécurité
 
-Intégration Streamlit
---------------------
+Classification des Menaces
+--------------------------
 
-.. function:: display_daily_report_section(manager)
+Le système utilise un algorithme de classification à trois niveaux :
 
-   Composant UI Streamlit pour la génération et téléchargement de rapports.
-   
-   :param manager: Gestionnaire système avec attribut nlp_reporter
+**Menaces de Priorité Élevée** 🔴
+   Incidents nécessitant une intervention immédiate : agressions physiques, 
+   actes de violence, explosions, incendies criminels. Ces événements 
+   déclenchent des alertes prioritaires.
 
-Usage dans la barre latérale Streamlit :
+**Menaces de Priorité Moyenne** 🟡
+   Incidents de sécurité modérés : vols, cambriolages, vandalisme, 
+   intrusions. Nécessitent une surveillance renforcée et des mesures 
+   préventives.
 
-.. code-block:: python
+**Activité de Routine** 🟢
+   Événements standard de surveillance : mouvements normaux, 
+   activités autorisées, maintenance. Documentés pour traçabilité.
 
-   with st.sidebar:
-       display_daily_report_section(gestionnaire_surveillance)
+Analyse des Tendances
+---------------------
 
-Configuration
--------------
+Le système identifie automatiquement :
 
-Le système de mots-clés de menaces peut être personnalisé :
+**Motifs Temporels**
+   * Heures de pointe d'activité suspecte
+   * Jours de la semaine à risque élevé
+   * Périodes de calme relatif
 
-.. code-block:: python
+**Motifs Géographiques**
+   * Zones à forte concentration d'incidents
+   * Points sensibles nécessitant surveillance renforcée
+   * Couloirs de circulation problématiques
 
-   generator = NLPReportGenerator()
-   
-   # Ajouter des mots-clés de menace personnalisés
-   generator.threat_keywords['high_threat'].extend(['arme', 'violence'])
-   generator.threat_keywords['medium_threat'].extend(['intrusion', 'flânerie'])
+**Motifs Comportementaux**
+   * Types d'incidents récurrents
+   * Escalade ou diminution des menaces
+   * Corrélations entre différents types d'événements
 
-Bonnes Pratiques
-----------------
+Structure des Rapports
+---------------------
 
-1. **Enregistrement Régulier** : Enregistrer les événements immédiatement pour des horodatages précis
-2. **Types d'Événements Cohérents** : Utiliser des catégories standardisées
-3. **Descriptions Détaillées** : Fournir des détails spécifiques pour une meilleure classification
-4. **Génération Quotidienne** : Générer les rapports à intervalles réguliers
-5. **Archivage** : Sauvegarder les rapports pour analyse historique
+Chaque rapport quotidien comprend :
 
-Dépendances
------------
+**En-tête et Résumé Exécutif**
+   Évaluation globale du niveau de risque avec code couleur et 
+   synthèse de la situation sécuritaire du jour.
 
-Packages Python requis :
+**Métriques Opérationnelles**
+   * Durée totale de surveillance
+   * Nombre d'événements détectés
+   * Taux d'activité par heure
+   * Identification des heures de pointe
 
-.. code-block:: text
+**Analyse des Menaces**
+   Répartition détaillée des incidents par niveau de priorité 
+   avec focus sur les événements critiques.
 
-   datetime
-   collections.defaultdict
-   collections.Counter
-   streamlit  # pour l'intégration UI
+**Surveillance des Foules**
+   Analyse spécialisée des événements liés à la densité de population 
+   et aux rassemblements importants.
 
-Gestion des Erreurs
+**Journal des Événements Critiques**
+   Liste chronologique des incidents les plus significatifs 
+   avec horodatage précis.
+
+**Recommandations Opérationnelles**
+   Conseils concrets pour améliorer la sécurité basés sur 
+   l'analyse des données du jour.
+
+Avantages du Système
 -------------------
 
-Le système inclut une gestion d'erreurs intégrée :
+**Pour les Équipes de Sécurité**
+   * Gain de temps considérable dans la rédaction de rapports
+   * Vue d'ensemble claire de la situation quotidienne
+   * Identification rapide des priorités d'intervention
+   * Traçabilité complète des événements
 
-* **Aucun Événement** : Message approprié si aucun événement enregistré
-* **Horodatages Invalides** : Utilise l'heure actuelle par défaut
-* **Analyse Vide** : Gère les cas sans événements correspondant aux critères
-* **Données Manquantes** : Traitement gracieux des attributs manquants
+**Pour les Responsables Sécurité**
+   * Métriques objectives pour évaluer les performances
+   * Tendances à long terme pour planification stratégique
+   * Justification des investissements sécuritaires
+   * Conformité réglementaire facilitée
+
+**Pour l'Organisation**
+   * Réduction des risques par anticipation
+   * Optimisation des ressources sécuritaires
+   * Amélioration continue des protocoles
+   * Documentation professionnelle pour audits
+
+Types d'Événements Surveillés
+-----------------------------
+
+**Sécurité Physique**
+   Intrusions, effractions, accès non autorisés, tentatives 
+   de contournement des systèmes de sécurité.
+
+**Sécurité des Personnes**
+   Agressions, altercations, comportements menaçants, 
+   situations d'urgence médicale.
+
+**Sécurité des Biens**
+   Vols, vandalismes, dégradations, tentatives de sabotage, 
+   manipulations d'équipements.
+
+**Gestion des Foules**
+   Surpopulation, mouvements de foule dangereux, 
+   rassemblements non autorisés, évacuations.
+
+**Sécurité Environnementale**
+   Incidents liés à la sécurité incendie, fuites, 
+   conditions météorologiques dangereuses.
+
+Intégration et Utilisation
+--------------------------
+
+Le système s'intègre facilement dans les infrastructures existantes :
+
+* **Interface Web Intuitive** pour consultation des rapports
+* **Génération Automatique** selon planning personnalisable  
+* **Export et Archivage** des rapports au format standard
+* **Alertes en Temps Réel** pour événements critiques
+* **Tableaux de Bord** avec visualisations graphiques
+
+Bonnes Pratiques d'Utilisation
+------------------------------
+
+**Configuration Initiale**
+   Adapter les seuils de classification aux spécificités 
+   de votre environnement et réglementations locales.
+
+**Formation des Équipes**
+   Sensibiliser le personnel à l'importance de la saisie 
+   précise et immédiate des événements.
+
+**Révision Régulière**
+   Analyser périodiquement les tendances pour ajuster 
+   les protocoles de sécurité et les zones de surveillance.
+
+**Archivage Structuré**
+   Conserver les rapports selon les exigences légales 
+   et les besoins d'analyse historique.
+
+Conformité et Sécurité
+---------------------
+
+Le système respecte les standards suivants :
+
+* **Protection des Données Personnelles** : Anonymisation automatique
+* **Traçabilité** : Journalisation complète des accès et modifications  
+* **Sécurité** : Chiffrement des données sensibles
+* **Conformité Réglementaire** : Respect des normes de surveillance locales
 
 .. note::
-   Ce système est conçu pour les applications de surveillance sécuritaire. 
-   Assurez-vous de la conformité avec les réglementations locales de confidentialité.
+   Ce système est conçu pour améliorer l'efficacité des équipes de sécurité 
+   tout en respectant la vie privée et les réglementations en vigueur.
 
 .. warning::
-   Les menaces de haute priorité doivent déclencher une révision manuelle immédiate 
-   en plus de la génération automatique de rapports.
+   Les rapports automatisés ne remplacent pas le jugement humain. Toute 
+   situation critique doit faire l'objet d'une vérification manuelle.
