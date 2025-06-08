@@ -1,4 +1,4 @@
-GuardVision Pro - Système de Surveillance Intelligente en Temps Réel
+GuardVision Test - Test du Système de Surveillance Intelligent en Temps Réel
 ==================================================================
 
 .. image:: https://img.shields.io/badge/Python-3.8%2B-blue
