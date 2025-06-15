@@ -35,7 +35,7 @@ Applications pratiques
 Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
 -------------------------------------------------------------------
 
-.. figure:: images/mae.jpg
+.. figure:: images/crowd.jpg
    :width: 100%
    :alt: Alternative text for the image
 
