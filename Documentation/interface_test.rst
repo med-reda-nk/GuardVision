@@ -1,5 +1,5 @@
-GuardVision Test - Test du Système de Surveillance Intelligent en Temps Réel
-==================================================================
+Test du Système de Surveillance Intelligent en Temps Réel
+============================================================
 
 
 
