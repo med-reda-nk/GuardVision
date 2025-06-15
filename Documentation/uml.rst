@@ -1,4 +1,4 @@
-Architecture et Conception du Système
+Modélisation et Conception du Système
 =====================================
 
 Cette section fournit un aperçu complet de l’architecture du système ainsi que de ses principaux aspects comportementaux et structurels à travers plusieurs diagrammes UML.
