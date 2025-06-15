@@ -33,7 +33,7 @@ Le diagramme d’activités fournit une vue d’ensemble du déroulement logique
 .. figure:: images/acti.png
    :alt: Diagramme d'activités
    :align: center
-   :width: 50%
+   :width: 90%
 
    Figure 2 : Diagramme d’activités représentant le flux opérationnel du système depuis le démarrage jusqu’à l’affichage des résultats.
 
