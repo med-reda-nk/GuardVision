@@ -142,6 +142,10 @@ Utilisation
 
 L'application s'ouvrira automatiquement dans votre navigateur à l'adresse ``http://localhost:8501``
 
+.. figure:: images/interfacecv.png
+   :width: 100%
+   :alt: crowd
+
 2. Interface Utilisateur
 -------------------------
 
@@ -159,6 +163,10 @@ Zone Principale
 * **Flux Vidéo en Direct** : Affichage temps réel avec annotations
 * **Résultats des Modèles** : Détections actuelles avec scores de confiance
 * **Journal des Détections** : Historique des événements détectés
+
+.. figure:: images/interfacecv2.png
+   :width: 100%
+   :alt: crowd
 
 3. Configuration des Seuils
 ----------------------------
