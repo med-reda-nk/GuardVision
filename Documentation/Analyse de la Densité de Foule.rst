@@ -37,7 +37,7 @@ Applications pratiques
 
 
 Analyse de la Convergence
-==========================
+--------------------------
 
 Cette section présente une analyse de la distribution des erreurs absolues du modèle, illustrée par l’histogramme ci-dessous.
 
