@@ -18,7 +18,7 @@ Diagramme de Cas d’Utilisation
 
 Le diagramme de cas d’utilisation met en évidence les interactions entre l’utilisateur et les fonctionnalités du système :
 
-.. figure:: images/use.jpg
+.. figure:: images/use.png
    :alt: Diagramme de cas d'utilisation
    :align: center
    :width: 100%
@@ -30,7 +30,7 @@ Diagramme d’Activités
 
 Le diagramme d’activités fournit une vue d’ensemble du déroulement logique des étapes d’exécution :
 
-.. figure:: images/act.jpg
+.. figure:: images/acti.png
    :alt: Diagramme d'activités
    :align: center
    :width: 50%
@@ -42,7 +42,7 @@ Diagramme de Séquence
 
 Le diagramme de séquence montre comment les composants du système interagissent dans le temps lors d’une demande de prévision :
 
-.. figure:: images/sequence.jpg
+.. figure:: images/sequence.png
    :alt: Diagramme de séquence
    :align: center
    :width: 90%
@@ -54,7 +54,7 @@ Diagramme de Classes
 
 Le diagramme de classes définit la structure interne, montrant comment les composants et les classes sont liés :
 
-.. figure:: images/class.jpg
+.. figure:: images/class.png
    :alt: Diagramme de classes
    :align: center
    :width: 90%
