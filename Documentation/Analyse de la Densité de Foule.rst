@@ -41,7 +41,7 @@ Analyse de la Convergence
 
 Cette section présente une analyse de la distribution des erreurs absolues du modèle, illustrée par l’histogramme ci-dessous.
 
-.. figure:: maae.png
+.. figure:: images/maae.png
    :alt: Histogramme des erreurs absolues
    :align: center
    :width: 80%
