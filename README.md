@@ -5,7 +5,7 @@ système de surveillance basé sur la vision par ordinateur et l'intelligence ar
 
 - models link : https://drive.google.com/drive/folders/1kTMjxi66thDcsd1EUR81ZwlWA2Tp2Cms?usp=drive_link
 
-- report link : [https://app.readthedocs.org/projects/guardvision2/](https://guardvision2.readthedocs.io/fr/latest/index.html)
+- report link : https://guardvision2.readthedocs.io/fr/latest/index.html
 
 ## Description du projet
 
