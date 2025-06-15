@@ -51,9 +51,8 @@ Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/Guard
    Tracking.rst
    Intégration et Architecture Système.rst
    Évaluation et Validation.rst
-   Considération Éthiques et Légales.rst
-   Conclusions et Perspectives.rst
    interface_test.rst
    nlp.rst
    guide.rst
-
+   Considération Éthiques et Légales.rst
+   Conclusions et Perspectives.rst
