@@ -1,12 +1,7 @@
 GuardVision Test - Test du Système de Surveillance Intelligent en Temps Réel
 ==================================================================
 
-.. image:: https://img.shields.io/badge/Python-3.8%2B-blue
-    :target: https://python.org
-.. image:: https://img.shields.io/badge/Streamlit-1.25%2B-FF4B4B
-    :target: https://streamlit.io
-.. image:: https://img.shields.io/badge/Licence-MIT-green
-    :target: LICENSE
+
 
 Check the Test code : `Test Interface <../Code_test/model_managing.py>`_
 
@@ -24,7 +19,7 @@ Architecture du Système
 3. **Système d'Alerte** : Déclenche des avertissements visuels
 
 .. figure:: images/architecture2.png
-    :width: 80%
+    :width: 100%
     :align: center
     :alt: Architecture Système
 
@@ -33,13 +28,7 @@ Architecture du Système
 Composants Clés
 ~~~~~~~~~~~~~~~
 - ``ModelManager`` : Gère le chargement des modèles et l'inférence multi-thread
-- ``draw_predictions()`` : Visualise les détections sur le flux vidéo
-- Interface Dynamique : Métriques de performance et contrôles en temps réel
+- ``NLPReportGenerator`` : Génère le rapport de surveillance
+-  ``OptimizedPoseDetector``: Défini le corps human et le suit
 
 
-Installation
-------------
-1. Cloner le dépôt :
-   ```bash
-   git clone https://github.com/med-reda-nk/GuardVision.git
-   cd guardvision-pro
