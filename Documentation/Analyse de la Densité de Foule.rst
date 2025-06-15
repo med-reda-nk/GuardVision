@@ -13,6 +13,10 @@ Méthodologie
 - **Cartes de densité** : Génération de représentations visuelles indiquant les zones de forte concentration.
 - **Analyse de flux** : Détection des mouvements collectifs anormaux (convergence, dispersion rapide).
 
+.. figure:: images/crowd.jpg
+   :width: 100%
+   :alt: pred vs real
+
 Métriques surveillées
 ---------------------
 
@@ -35,9 +39,9 @@ Applications pratiques
 Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
 -------------------------------------------------------------------
 
-.. figure:: images/crowd.jpg
+.. figure:: images/mae.jpg
    :width: 100%
-   :alt: Alternative text for the image
+   :alt: mae
 
 
 
