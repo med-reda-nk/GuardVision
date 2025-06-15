@@ -30,7 +30,7 @@ Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/Guard
 
 .. figure:: images/logo2.jpg
    :width: 100%
-   :alt: Alternative text for the image
+   :alt: logo
    :name: logo
 
 
