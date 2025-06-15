@@ -11,7 +11,7 @@ master_doc = 'index'
 
 # Informations générales
 project = 'GuardVision'
-copyright = '2025, Mohamed Reda Nkira - Zouga Mouhcine'
+copyright = '2025, Mohamed Reda Nkira - Zouga Mouhcine // IATD-SI ENSAM Meknes'
 author = 'Mohamed Reda Nkira - Zouga Mouhcine'
 
 version = '0.1'
