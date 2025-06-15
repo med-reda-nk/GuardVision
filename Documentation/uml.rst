@@ -21,7 +21,7 @@ Le diagramme de cas d’utilisation met en évidence les interactions entre l’
 .. figure:: images/use.png
    :alt: Diagramme de cas d'utilisation
    :align: center
-   :width: 100%
+   :width: 120%
 
    Figure 1 : Diagramme de cas d’utilisation illustrant le périmètre fonctionnel du système.
 
