@@ -21,6 +21,7 @@ Fonctionnalités Principales
 
 * **Reconnaissance d'Actions** : Détection automatique de 13 types d'actions (bagarre, vol, vandalisme, etc.)
 * **Analyse de Foule** : Estimation de la densité de foule en temps réel
+* **Détection d'arme** : detection de possession d'arme
 * **Détection de Poses** : Suivi des poses humaines avec MediaPipe
 * **Rapports Automatiques** : Génération de rapports journaliers en langage naturel
 * **Interface Web Interactive** : Interface utilisateur moderne avec Streamlit
@@ -107,14 +108,14 @@ Créer la structure suivante ::
     ├── models/
     │   ├── action_model.keras
     │   └── crowd_model.keras
-    ├── paste.txt (votre fichier principal)
+    ├── streamlit_interface.py (fichier principal)
     ├── requirements.txt
     └── README.md
 
 Configuration des Modèles
 =========================
 
-Modèles Requis
+Modèles Requis : téléchargé depuis le lien
 --------------
 
 1. **action_model.keras** : Modèle de reconnaissance d'actions
@@ -145,7 +146,7 @@ Utilisation
 
 ::
 
-    streamlit run paste.txt
+    streamlit run streamlit_interface.py
 
 L'application s'ouvrira automatiquement dans votre navigateur à l'adresse ``http://localhost:8501``
 
@@ -213,9 +214,9 @@ Le système génère automatiquement des rapports détaillés incluant :
 Accès aux Rapports
 ~~~~~~~~~~~~~~~~~~
 
-1. Cliquez sur "📊 Generate Report" dans le panneau de contrôle
-2. Visualisez le rapport dans l'expandeur "📄 View Report"
-3. Téléchargez avec "💾 Save Report"
+1. Cliquez sur "Generate Report" dans le panneau de contrôle
+2. Visualisez le rapport dans l'expandeur "View Report"
+3. Téléchargez avec "Save Report"
 
 2. Types de Détections
 -----------------------
@@ -418,34 +419,3 @@ Version 1.0.0
 * Détection de poses MediaPipe
 * Support YOLO pour détection de personnes
 
-Support et Contribution
-========================
-
-Signaler un Bug
-----------------
-
-1. Vérifiez les issues existantes
-2. Créez une nouvelle issue avec :
-   
-   * Description détaillée
-   * Logs d'erreur
-   * Configuration système
-
-Demande de Fonctionnalité
---------------------------
-
-1. Décrivez le cas d'usage
-2. Expliquez l'impact attendu
-3. Proposez une implémentation si possible
-
-Licence
-=======
-
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
-
----
-
-**Auteur** : [Votre Nom]  
-**Version** : 1.0.0  
-**Date** : 2024  
-**Contact** : [votre.email@example.com]
