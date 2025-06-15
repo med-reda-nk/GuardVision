@@ -2,12 +2,6 @@
 GuardVision - Guide d'Utilisation
 ===========================
 
-.. image:: https://img.shields.io/badge/Version-1.0-blue.svg
-   :alt: Version
-.. image:: https://img.shields.io/badge/Python-3.8+-green.svg
-   :alt: Python Version
-.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-   :alt: License
 
 Description
 ===========
