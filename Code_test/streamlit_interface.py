@@ -31,7 +31,6 @@ class NLPReportGenerator:
         }
 
     def log_event(self, event_type, details, timestamp=None):
-        """Log events for daily report generation"""
         if timestamp is None:
             timestamp = datetime.now()
 
@@ -46,7 +45,6 @@ class NLPReportGenerator:
         self.daily_events[date_key].append(event_data)
 
     def generate_daily_summary(self, target_date=None):
-        """Generate NLP-based daily summary report"""
         if target_date is None:
             target_date = datetime.now().strftime('%Y-%m-%d')
 
@@ -64,7 +62,6 @@ class NLPReportGenerator:
         return report
 
     def _analyze_events(self, events):
-        """Analyze events and extract patterns"""
         analysis = {
             'total_events': len(events),
             'threat_levels': {'high': 0, 'medium': 0, 'low': 0},
@@ -76,14 +73,12 @@ class NLPReportGenerator:
             'duration_minutes': 0
         }
 
-        # Calculate session duration
         if events:
             start_time = min(event['timestamp'] for event in events)
             end_time = max(event['timestamp'] for event in events)
             analysis['duration_minutes'] = int((end_time - start_time).total_seconds() / 60)
 
         for event in events:
-            # Categorize threat level
             event_detail = event['details'].lower()
 
             if any(keyword in event_detail for keyword in self.threat_keywords['high_threat']):
@@ -116,7 +111,6 @@ class NLPReportGenerator:
         return analysis
 
     def _generate_nlp_report(self, analysis, date):
-        """Generate natural language report using NLP techniques"""
         report_parts = []
 
         # Header
@@ -144,11 +138,11 @@ class NLPReportGenerator:
             threat_status = "🟢 LOW RISK"
             summary = "Routine monitoring period with no significant security threats."
 
-        report_parts.append(f"\n🎯 THREAT ASSESSMENT: {threat_status}")
-        report_parts.append(f"📝 SUMMARY: {summary}")
+        report_parts.append(f"\nTHREAT ASSESSMENT: {threat_status}")
+        report_parts.append(f"SUMMARY: {summary}")
 
         # Operational metrics
-        report_parts.append(f"\n📈 OPERATIONAL METRICS:")
+        report_parts.append(f"\nOPERATIONAL METRICS:")
         report_parts.append(f"   • Monitoring Duration: {duration} minutes")
         report_parts.append(f"   • Total Events Detected: {total_events}")
         report_parts.append(f"   • Events per Hour: {total_events / max(1, duration / 60):.1f}")
@@ -183,7 +177,7 @@ class NLPReportGenerator:
         # Recommendations
         recommendations = self._generate_recommendations(analysis)
         if recommendations:
-            report_parts.append(f"\n💡 RECOMMENDATIONS:")
+            report_parts.append(f"\nRECOMMENDATIONS:")
             for rec in recommendations:
                 report_parts.append(f"   • {rec}")
 
@@ -227,16 +221,16 @@ class NLPReportGenerator:
 def display_daily_report_section(manager):
     """Display daily report section in sidebar"""
     if manager and hasattr(manager, 'nlp_reporter'):
-        st.subheader("📋 Daily Report")
+        st.subheader("Daily Report")
 
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("📊 Generate Report", key="generate_report_button"):
+            if st.button("Generate Report", key="generate_report_button"):
                 report = manager.nlp_reporter.generate_daily_summary()
                 st.session_state.daily_report = report
 
         with col2:
-            if st.button("💾 Save Report", key="save_report_button"):
+            if st.button("Save Report", key="save_report_button"):
                 if hasattr(st.session_state, 'daily_report'):
                     filename = f"surveillance_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
                     st.download_button(
@@ -248,7 +242,7 @@ def display_daily_report_section(manager):
 
         # Display report if generated
         if hasattr(st.session_state, 'daily_report'):
-            with st.expander("📄 View Report", expanded=False):
+            with st.expander("View Report", expanded=False):
                 st.text(st.session_state.daily_report)
 
 
@@ -303,7 +297,7 @@ class OptimizedModelManager:
         self.last_prediction = None
         self.message_history = deque(maxlen=20)
         self.frame_skip_counter = 0
-        self.process_every_n_frames = 2
+        self.process_every_n_frames = 1
 
         # Track last detections
         self.last_detections = {
@@ -319,7 +313,7 @@ class OptimizedModelManager:
                                 'Robbery', 'Shooting', 'Shoplifting', 'Stealing', 'Vandalism']
             },
             "crowd": {
-                "threshold": 0.5,  # Reasonable threshold for crowd detection
+                "threshold": 1,  # Reasonable threshold for crowd detection
                 "density": 0
             }
         }
@@ -343,7 +337,6 @@ class OptimizedModelManager:
             self.yolo_model = None
 
     def load_model(self, model_name, model_path):
-        """Load and optimize model with TensorFlow Lite"""
         try:
             if not os.path.exists(model_path):
                 st.error(f"Model not found at: {model_path}")
@@ -396,7 +389,6 @@ class OptimizedModelManager:
             return False
 
     def process_frame(self, frame):
-        """Process frame through models with enhanced debugging"""
         # Resize frame for faster processing
         small_frame = cv2.resize(frame, (320, 240))
 
@@ -455,12 +447,10 @@ class OptimizedModelManager:
                         self._add_detection_message(model_name, class_name, confidence)
                         print(f"ACTION DETECTED: {class_name} ({confidence:.3f})")
                     else:
-                        # Still show what was detected even if below threshold
                         class_name = self.model_config["action"]["class_names"][class_id]
                         print(f"Action below threshold: {class_name} ({confidence:.3f})")
                     print("=" * 50)
 
-                # Process CROWD model predictions
                 elif model_name == "crowd":
                     print(f"\n=== DEBUG: Crowd Model Output ===")
                     print(f"Raw prediction shape: {preds.shape}")
@@ -482,14 +472,13 @@ class OptimizedModelManager:
                         print(f"Max density: {max_density}")
                         print(f"Mean density: {mean_density}")
 
-                        # Use total density as the crowd measure
                         density = float(total_density)
 
-                    elif len(preds.shape) == 2:  # Single value output (batch, 1)
+                    elif len(preds.shape) == 2:
                         density = float(preds[0, 0])
                         print(f"Single density value: {density}")
 
-                    elif len(preds.shape) == 1:  # Single value output (1,)
+                    elif len(preds.shape) == 1:
                         density = float(preds[0])
                         print(f"Single density value: {density}")
 
@@ -508,7 +497,6 @@ class OptimizedModelManager:
                         self._add_detection_message(model_name, None, density)
                         print(f"CROWD DETECTED: Density {density:.4f}")
                     else:
-                        # DEBUG: Still log low density values
                         print(f"Crowd density below threshold: {density:.4f}")
                     print("=" * 50)
 
@@ -517,7 +505,7 @@ class OptimizedModelManager:
                 import traceback
                 traceback.print_exc()
 
-        # YOLO detection (same as before)
+        # YOLO detection
         if self.yolo_model is not None:
             try:
                 with torch.no_grad():
@@ -571,11 +559,9 @@ class OptimizedModelManager:
         }
 
     def initialize_nlp_reporter(self):
-        """Initialize NLP report generator"""
         self.nlp_reporter = NLPReportGenerator()
 
     def _add_detection_message(self, model_name, class_name, value):
-        """Add message and log event for NLP reporting"""
         timestamp = time.strftime("%H:%M:%S")
         current_time = datetime.now()
 
@@ -635,8 +621,7 @@ class OptimizedModelManager:
 
 
 def draw_predictions(frame, detections, pose_landmarks):
-    """Draw only pose landmarks on frame - model predictions shown in sidebar"""
-    # Only draw pose landmarks on the frame
+    # draw pose landmarks on the frame
     if pose_landmarks:
         for person_landmarks in pose_landmarks:
             key_points = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
@@ -662,7 +647,6 @@ def draw_predictions(frame, detections, pose_landmarks):
 
 
 def display_message_history(messages):
-    """Display messages efficiently"""
     if not messages:
         st.info("System running - no alerts detected")
     else:
@@ -694,7 +678,7 @@ def main():
         </style>
     """, unsafe_allow_html=True)
 
-    st.title("👁️ GuardVision")
+    st.title("GuardVision")
     st.markdown("**Surveillance System**")
 
     # Initialize session state
@@ -704,7 +688,7 @@ def main():
         st.session_state.running = False
 
     with st.sidebar:
-        st.header("⚙️ Control Panel")
+        st.header("Control Panel")
 
         # Model selection - BOTH enabled by default
         use_action = st.checkbox("Action Recognition", value=True)
@@ -724,7 +708,7 @@ def main():
         camera_resolution = st.selectbox("Resolution", ["320x240", "640x480", "1280x720"], index=1)
 
         # Model status
-        st.subheader("📊 Model Status")
+        st.subheader("Model Status")
         display_daily_report_section(st.session_state.manager)
 
         if st.session_state.manager and st.session_state.manager.tflite_models:
@@ -735,9 +719,9 @@ def main():
         # Control buttons
         col1, col2 = st.columns(2)
         with col1:
-            start_button = st.button("🚀 Start", type="primary")
+            start_button = st.button("Start", type="primary")
         with col2:
-            stop_button = st.button("🛑 Stop", type="secondary")
+            stop_button = st.button("Stop", type="secondary")
 
     # Handle start button
     if start_button and not st.session_state.running:
@@ -808,12 +792,12 @@ def main():
         col1, col2 = st.columns([3, 1])
 
         with col1:
-            st.subheader("📹 Live Feed")
+            st.subheader("Live Feed")
             video_placeholder = st.empty()
             status_placeholder = st.empty()
 
         with col2:
-            st.subheader("📊 Real-time Results")
+            st.subheader("Real-time Results")
 
             # Show active models
             active_models = list(st.session_state.manager.tflite_models.keys())
@@ -828,7 +812,7 @@ def main():
             # Real-time model results display
             results_placeholder = st.empty()
 
-            st.subheader("🔔 Detection Log")
+            st.subheader("Detection Log")
             message_placeholder = st.empty()
 
         # Performance tracking
@@ -917,6 +901,7 @@ def main():
                         else:
                             st.info("👥 **Crowd Density:** Below threshold")
                     else:
+                        time.sleep(1)
                         st.info("🎯 **Action:** No significant activity detected")
                         st.info("👥 **Crowd Density:** Below threshold")
 
