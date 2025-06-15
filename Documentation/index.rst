@@ -54,5 +54,6 @@ Lien vers github repository:  `Cliquez ici <https://github.com/med-reda-nk/Guard
    Considération Éthiques et Légales.rst
    Conclusions et Perspectives.rst
    interface_test.rst
+   guide.rst
    nlp.rst
 
