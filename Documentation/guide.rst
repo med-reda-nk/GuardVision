@@ -1,5 +1,5 @@
 ===========================
-GuardVision - Guide d'Utilisation
+Guide d'Utilisation
 ===========================
 
 
