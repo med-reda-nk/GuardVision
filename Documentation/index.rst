@@ -1,7 +1,7 @@
 
-GuardVision - CV
+GuardVision - Computer Vision project
 ===================================================
-
+Étude académique avancée sur la vision par ordinateur : Renforcement des compétences théoriques et pratiques, réalisé dans le cadre de la formation à l’ENSAM Meknès, filière IATD-SI
 
 
 - **Superviseur** :  Mr. MASROUR Tawfik |linkedin_Masrour|
