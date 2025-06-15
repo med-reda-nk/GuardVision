@@ -36,64 +36,42 @@ Applications pratiques
 
 
 
-Analyse de la Courbe d'Apprentissage : Erreur Absolue Moyenne (MAE)
--------------------------------------------------------------------
-
-.. figure:: images/maae.png
-   :width: 100%
-   :alt: mae
-
-
-
-
 Analyse de la Convergence
--------------------------
+==========================
 
-**Comportement des Courbes :**
+Cette section présente une analyse de la distribution des erreurs absolues du modèle, illustrée par l’histogramme ci-dessous.
 
-* Les deux courbes montrent une convergence initiale rapide et similaire
-* La courbe d'entraînement continue de décroître de manière monotone
-* La courbe de validation se stabilise après l'époque 20, puis montre des signes de dégradation
+.. figure:: maae.png
+   :alt: Histogramme des erreurs absolues
+   :align: center
+   :width: 80%
 
+   Figure 1 : Distribution des erreurs absolues du modèle sur les données de test.
 
-L'arrêt de l'entraînement se situe approximativement à l'époque 25-30, où :
+Interprétation de l'Histogramme
+-------------------------------
 
-* MAE d'entraînement ≈ 3,4
-* MAE de validation ≈ 3,5
-* Écart minimal entre entraînement et validation
+- La majorité des erreurs absolues se situent entre **5 et 15**, avec un **pic notable entre 10 et 12**.
+- Très peu de prédictions présentent des erreurs supérieures à **25**, ce qui montre une **bonne maîtrise des cas extrêmes**.
+- La distribution est **légèrement asymétrique**, avec une **queue vers la droite**, indiquant quelques valeurs avec des erreurs plus importantes.
+- On observe que les erreurs sont **relativement bien concentrées** autour de la plage 7–15, ce qui suggère que le modèle est **cohérent dans ses prédictions**.
 
+Évaluation de la Performance
+----------------------------
 
-Implications pour le Modèle
----------------------------
+- **Erreurs faibles à modérées** pour la majorité des cas, ce qui traduit une **bonne précision globale**.
+- L’absence de pics extrêmes indique que le modèle est **robuste face aux outliers** ou aux cas particuliers.
+- L’erreur absolue moyenne (MAE) estimée à partir de cette distribution semble être située autour de **10 à 12**.
 
-**Performance Atteinte :**
+Limites et Pistes d’Amélioration
+--------------------------------
 
-* **Meilleure Performance de Validation** : MAE ≈ 3,1 (vers l'époque 25-30)
-* **Performance Finale d'Entraînement** : MAE ≈ 2,5 (époque 120)
-* **Écart Final** : Environ 0,6-0,9 entre entraînement et validation
+- Réduire les erreurs situées au-delà de **20** améliorerait la performance globale.
+- Une **analyse des cas à forte erreur** pourrait permettre de détecter des motifs spécifiques ou des classes difficiles à prédire.
+- L'ajustement de certains **hyperparamètres** ou l'intégration de **données supplémentaires** pourrait contribuer à resserrer la distribution autour de valeurs plus faibles.
 
-**Qualité de l'Apprentissage :**
+Conclusion
+----------
 
-* Apprentissage initial efficace et stable
-* Capacité de généralisation correcte dans les premières époques
-* Développement progressif du sur-apprentissage
+L’histogramme montre une **distribution globalement satisfaisante** des erreurs absolues, avec peu de déviations importantes. Cela indique que le modèle a bien appris les tendances des données, mais laisse une marge d’amélioration sur les cas plus complexes.
 
-
-Évaluation de la Robustesse
----------------------------
-* Convergence initiale rapide et stable
-* Absence d'instabilité ou d'oscillations importantes
-* Performance finale acceptable (MAE < 3,5)
-
-
-
-Spécifications Techniques
--------------------------
-
-:Métrique d'Évaluation: Erreur Absolue Moyenne (MAE)
-:Nombre d'Époques: 120
-:Point Optimal Estimé: Époque 25-30
-:MAE Optimale (Validation): ~3,1
-:MAE Finale (Entraînement): ~2,5
-:Écart Final: ~0,6-0,9
-:Recommandation: Implémentation d'arrêt précoce
