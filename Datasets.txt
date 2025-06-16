@@ -1,0 +1,8 @@
+Action recognition : https://www.kaggle.com/datasets/minhajuddinmeraj/anomalydetectiondatasetucf/data
+Crowd density : https://www.kaggle.com/datasets/fmena14/crowd-counting
+weapon detection :
+  rf = Roboflow(api_key="nlkpFU0jEfJDSIhoXbNE")
+  project = rf.workspace("weapon-detection-hz2zg").project("weapon_detection_dataset-we9sw")
+  version = project.version(2)
+  dataset = version.download("yolov12")
+THIS IS A TEMPORARY SOLUTION TO PROVIDE THE DATA USED IN THIS PROJECT
