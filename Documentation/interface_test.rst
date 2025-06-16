@@ -3,7 +3,7 @@ Test du Système de Surveillance Intelligent en Temps Réel
 
 
 
-Check the Test code : `Test Interface <../Code_test/model_managing.py>`_
+Check the Test code : `Test Interface <https://github.com/med-reda-nk/GuardVision/blob/main/Code_test/model_managing.py>`_
 
 Un système de surveillance combinant reconnaissance d'actions et analyse de densité de foule utilisant des modèles TensorFlow.
 
