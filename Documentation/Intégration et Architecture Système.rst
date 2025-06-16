@@ -12,7 +12,7 @@ Architecture proposée
 - **Moteur d'inférence** : Évaluation du niveau de risque global basée sur l'ensemble des informations
 - **Module d'alerte** : Génération de notifications adaptées au niveau de menace détecté
 
-.. figure:: images/pipeline.png
+.. figure:: images/arc.png
    :width: 100%
    :alt: Alternative text for the image
 
