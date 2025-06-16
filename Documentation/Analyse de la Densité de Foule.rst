@@ -1,7 +1,7 @@
 Analyse de la Densité de Foule
 ==============================
 
-Check the notebook: `Crowd Density Notebook <../notebooks/Crowd_Density.ipynb>`_
+Check the notebook: `Crowd Density Notebook <https://github.com/med-reda-nk/GuardVision/blob/main//notebooks/Crowd_Density.ipynb>`_
 
 L'analyse de densité permet d'évaluer le nombre de personnes présentes dans une zone et leur distribution spatiale, essentielle pour détecter les situations de surpopulation ou de mouvements de panique.
 
