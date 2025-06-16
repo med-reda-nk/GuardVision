@@ -1,7 +1,7 @@
 Tracking (Suivi d'Individus)
 ============================
 
-Check the Test Code : `Tracking test code <../Code_test/tracking.py>`_
+Check the Test Code : `Tracking test code <https://github.com/med-reda-nk/GuardVision/blob/main/Code_test/tracking.py>`_
 
 Le système de tracking permet de suivre les déplacements des personnes à travers l'espace surveillé, même lorsqu'elles passent d'une caméra à une autre, tout en comptant le nombre de personne présents.
 
