@@ -1,7 +1,7 @@
 Générateur de Rapports de Surveillance
 =====================================
 
-Check the notebook: `Generation de Rapport Notebook <../notebooks/nlp_report_generation.ipynb>`_
+Check the notebook: `Generation de Rapport Notebook <https://github.com/med-reda-nk/GuardVision/blob/main/notebooks/nlp_report_generation.ipynb>`_
 
 Vue d'Ensemble
 --------------
