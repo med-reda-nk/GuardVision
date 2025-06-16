@@ -52,8 +52,8 @@ Vérifiez que Python 3.8+ est installé ::
 
 ::
 
-    git clone https://github.com/votre-repo/guardvision.git
-    cd guardvision
+    git clone https://github.com/med-reda-nk/GuardVision.git
+    cd GuardVision
 
 3. Créer un Environnement Virtuel
 ----------------------------------
